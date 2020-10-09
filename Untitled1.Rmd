@@ -8,7 +8,25 @@ output: html_document
 
 ##### INTRODUCTION
 
+As the world struggles to convince so many people about the urgency of climate change it needs to be known that the threat we face is not just that of rising sea levels or CO2 levels—it is that of losing our homes. It is that of entire cities having to uproot and move elsewhere because they can no longer sustain themselves. Far from just a small increase in temperature, but a disruption of our lives as we know it. 
+
+Each year, tens of millions of people are driven from their homes by floods, storms, and droughts. The Ecological Threat Register, conducted by The Sydney-based Institute for Economics and Peace (IEP), measures ecological threats over 157 independent states and territories. The report projects that as many as 1.2 billion people around the world could be displaced by 2050 (Institute for Economics and Peace, 2020). Adverse effects of global climate change will induce more extreme weather, growing food and water insecurity, and rising sea levels which will cause the number of displaced people to rise (UNHCR, 2019). The report identifies three clusters of ecological hotspots: the Sahel-Horn belt of Africa, from Mauritania to Somalia; the Southern African belt, from Angola to Madagascar, and the Middle East and Central Asian belt, from Syria to Pakistan. 
+
+The intersection of climate change and migration requires comprehensive data analysis and solutions to the multidimensional challenges it creates (Podesta, 2019). Therefore, analyzing the dynamics between climate change indicators and displaced people not due to conflict can reveal opportunities for interventions. 
+
+Sources:
+Brown, O. (2008). Migration and Climate Change. IOM Migration Research Series Migration and Climate Change, (31). https://doi.org/10.18356/bd790a56-en
+
+United Nations High Commissioner for Refugees. Climate change and displacement. https://www.unhcr.org/en-us/news/stories/2019/10/5da5e18c4/climate-change-and-displacement.html. 
+
+
 ##### DATA DESCRIPTION
+
+The data for our project comes from the World Development Bank. According to the WDB, most of the data from the data set comes directly from each country in the World Bank Group’s national statistical systems. The data itself contains many variables, and the series name tells us the metric for which we are getting data. Within each series, the data is broken down into the data for each nation, and that data is further broken down into the measurement for the series metric each year between 2000-2018. This data set contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. The data set also includes points on conflict, fragility and, most importantly, displacement of people within given countries. Our primary goal in this project is to understand the correlation between climate change indicators and socioeconomic factors, and the resulting displacement. We would like to look at the environmental and socioeconomic data that might predict displacement. For instance, previous literature has indicated that variables such as rainfall, agricultural yield, and low-lying areas may be associated with internal displacement, and we would like to see if the data from the World Development Bank are consistent with these claims.
+
+We will start by examining variables in the WDB data such as “Agriculture, forestry, and fishing, value added” (measured in %GDP and %annual growth) to see how important agriculture and these other variables are to the economy of the nation. Other variables include “Urban population living in areas where elevation is below 5 meters (% of total population)”, which will tell us the percentage of people live in low-lying areas. We would also like to see if socioeconomic factors and poverty are better predictors of internal displacement not due to conflict. Then, we will analyze the correlation between displacement and statistics such as prevalence of food security in a nation, people using at least basic drinking water services, and GDP per capita. There is an incredible amount of different metrics taken by the World Bank over the past 18 years, but we will only look at variables that have sufficient amount of data (eg. at least half the countries have data for at least 10 years). 
+
+We hypothesize that the percentage of total population below 5 meters of elevation in island nations, poverty, and falling agricultural output will be the strongest correlates and predictors of displacement of people due to climate in following years. 
 
 ##### GLIMPSE OF DATA
 
