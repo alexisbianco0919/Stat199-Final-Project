@@ -14,7 +14,7 @@ output: html_document
 
 ```{r load-data, message = FALSE}
 library(tidyverse)
-climate <- read.csv("WB_clim_migr_conf.csv")
+climate <- read.csv("data/WB_clim_migr_conf.csv")
 ```
 
 ```{r glimpse-data}
