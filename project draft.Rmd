@@ -10,6 +10,11 @@ authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ```{r loading-pack-reading-data, message=FALSE}
 library(tidyverse)
 climate <- read_csv("data/WB_clim_migr_conf.csv")
+
+#climate2 <- data.frame(t(climate[-1]))
+#colnames(climate2) <- climate[, -1]
+
+#glimpse(climate2)
 ```
 
 ### Introduction
