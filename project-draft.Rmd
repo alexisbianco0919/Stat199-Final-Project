@@ -8,6 +8,7 @@ authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ---
 
 ```{r loading-pack-reading-data, message=FALSE}
+#library(usethis)
 library(tidyverse)
 climate <- read_csv("data/climate_update.csv")
 
