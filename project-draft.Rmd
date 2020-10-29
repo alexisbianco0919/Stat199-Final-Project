@@ -74,6 +74,19 @@ climateData <- climate %>%
          
 ```
 
+
+```{r}
+climateData2 <- climateData %>% 
+  filter(`Series Name` == "CO2 emissions (metric tons per capita)" | `Series Name` == "Net migration" ) 
+  #filter("")
+
+climate2 <- data.frame(t(climateData2[-1]))
+#climate2 %>% 
+ # filter()
+
+```
+
+
 ### Results
 
 
