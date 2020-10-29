@@ -10,7 +10,9 @@ authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ```{r loading-pack-reading-data, message=FALSE}
 #library(usethis)
 library(tidyverse)
-climate <- read_csv("data/climate_update.csv")
+climate <- read_csv("data/climate_Filtered_Data.csv")
+
+#View(climate)
 
 #climate2 <- data.frame(t(climate[-1]))
 #colnames(climate2) <- climate[, -1]
@@ -62,21 +64,21 @@ Once we identify some of the better predictors of displacement, we would like to
 
 
 ```{r mutate-regions}
-climateData <- climate %>%
-  mutate(MiddleEastAndCentralAsianBelt = ifelse(`Country Name` == "Syrian Arab Republic" | 
-        `Country Name` == "Iraq" | `Country Name` == "Afghanistan" | `Country Name` == "Pakistan" | 
-        `Country Name` == "Iran, Islamic Rep.", 1, 0)) %>%
-  mutate(SouthernAfricanBelt = ifelse(`Country Name` == "Angola" | `Country Name` == "Zambia" | 
-        `Country Name` == "Zimbabwe" | `Country Name` == "Mozambique" | `Country Name` == "Malawi" |
-        `Country Name` == "Madagascar", 1, 0)) %>%
-  mutate(SahelHornBelt = ifelse(`Country Name` == "Senegal" | `Country Name` == "Mauritania" | 
-        `Country Name` == "Mali" |`Country Name` == "Burkina Faso" | `Country Name` == "Niger" | 
-        `Country Name` == "Chad" | `Country Name` == "Sudan" | `Country Name` == "Eritrea", 1, 0))
+#climateData <- climate %>%
+  #mutate(MiddleEastAndCentralAsianBelt = ifelse(`Country Name` == "Syrian Arab Republic" | 
+        #`Country Name` == "Iraq" | `Country Name` == "Afghanistan" | `Country Name` == "Pakistan" #| 
+       # `Country Name` == "Iran, Islamic Rep.", 1, 0)) %>%
+  #mutate(SouthernAfricanBelt = ifelse(`Country Name` == "Angola" | `Country Name` == "Zambia" | 
+        #`Country Name` == "Zimbabwe" | `Country Name` == "Mozambique" | `Country Name` == "Malawi" |
+       # `Country Name` == "Madagascar", 1, 0)) %>%
+  #mutate(SahelHornBelt = ifelse(`Country Name` == "Senegal" | `Country Name` == "Mauritania" | 
+      #  `Country Name` == "Mali" |`Country Name` == "Burkina Faso" | `Country Name` == "Niger" | 
+      #  `Country Name` == "Chad" | `Country Name` == "Sudan" | `Country Name` == "Eritrea", 1, 0))
          
 ```
 
 
-```{r}
+```{r, eval =FALSE}
 climateData2 <- climateData %>% 
   filter(`Series Name` == "CO2 emissions (metric tons per capita)" | `Series Name` == "Net migration" ) 
   #filter("")
