@@ -9,12 +9,11 @@ authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 
 ```{r loading-pack-reading-data, message=FALSE}
 library(tidyverse)
-climate <- read_csv("data/WB_clim_migr_conf.csv")
+climate <- read_csv("data/climate_update.csv")
 
 #climate2 <- data.frame(t(climate[-1]))
 #colnames(climate2) <- climate[, -1]
 
-#glimpse(climate2)
 ```
 
 ### Introduction
@@ -59,6 +58,13 @@ and once we identify some of the better predictors of displacement, we would lik
 
 ```
 
+
+```{r, eval=FALSE}
+climateData <- climate2 %>%
+  mutate(inCountry = case_when (
+    country.name == 
+  ))
+```
 
 ### Restults
 
