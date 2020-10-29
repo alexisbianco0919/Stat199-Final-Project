@@ -63,16 +63,16 @@ Once we identify some of the better predictors of displacement, we would like to
 
 
 ```{r, eval=FALSE}
-climateData <- climate2 %>%
-  mutate(MiddleEastAndCentralAsianBelt = ifelse(country.name == "Syrian Arab Republic" | 
-        country.name == "Iraq" | country.name == "Afghanistan" | country.name == "Pakistan" | 
-        country.name == "Iran, Islamic Rep.", 1, 0)) %>%
-  mutate(SouthernAfricanBelt = ifelse(country.name == "Angola" | country.name == "Zambia" | 
-        country.name == "Zimbabwe" | country.name == "Mozambique" | country.name == "Malawi" |
-        country.name == "Madagascar", 1, 0)) %>%
-  mutate(SahelHornBelt = ifelse(country.name == "Senegal" | country.name == "Mauritania" | 
-        country.name == "Mali" | country.name == "Burkina Faso" | country.name == "Niger" | 
-        country.name == "Chad" | country.name == "Sudan" | country.name == "Eritrea", 1, 0))
+climateData <- climate %>%
+  mutate(MiddleEastAndCentralAsianBelt = ifelse(`Country Name` == "Syrian Arab Republic" | 
+        `Country Name` == "Iraq" | `Country Name` == "Afghanistan" | `Country Name` == "Pakistan" | 
+        `Country Name` == "Iran, Islamic Rep.", 1, 0)) %>%
+  mutate(SouthernAfricanBelt = ifelse(`Country Name` == "Angola" | `Country Name` == "Zambia" | 
+        `Country Name` == "Zimbabwe" | `Country Name` == "Mozambique" | `Country Name` == "Malawi" |
+        `Country Name` == "Madagascar", 1, 0)) %>%
+  mutate(SahelHornBelt = ifelse(`Country Name` == "Senegal" | `Country Name` == "Mauritania" | 
+        `Country Name` == "Mali" |`Country Name` == "Burkina Faso" | `Country Name` == "Niger" | 
+        `Country Name` == "Chad" | `Country Name` == "Sudan" | `Country Name` == "Eritrea", 1, 0))
          
 ```
 
