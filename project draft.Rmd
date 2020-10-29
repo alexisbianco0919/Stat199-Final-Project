@@ -31,26 +31,29 @@ We hypothesize that the percentage of total population below 5 meters of elevati
 
 ### Methodology
 
-In order to analyze our data, we will run multiple linear regressions on internally displaced people associated with disasters and other variables that have been associated with displacement. We will look at regions of countries in the world in order to make the data analysis easier for us. We would like to see which variables are correlated with internal displacement, and once we identify some of the better predictors of displacement, we would like to run other 
+In order to analyze our data, we will run multiple linear regressions on internally displaced people associated with disasters and other variables that have been associated with displacement. We will look at regions of countries in the world in order to make the data analysis easier for us. We would like to see which variables are predictors of internal displacement. Seeing these predictors will allow us to easily see which variables are associated with high amounts of displacement due to disaster. Specifically, we expect 
+
+
+and once we identify some of the better predictors of displacement, we would like to run other analyses, such as Chi Squared tests to determine whether these predictors are independent of one another, and two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. 
 
 ```{r}
-displacement <- climate %>% 
-  filter(`Series Name` == "Internally displaced persons, new displacement associated with disasters (number of cases)" | `Series Name` == "Rural population") %>% 
-  filter(`Country Name` == "Vietnam") %>% 
-  select(!(`Country Name` | `Country Code` | `Series Code`))
+#displacement <- climate %>% 
+  #filter(`Series Name` == "Internally displaced persons, new displacement associated with disasters (number of cases)" | `Series Name` == "Rural population") %>% 
+  #filter(`Country Name` == "Vietnam") %>% 
+  #select(!(`Country Name` | `Country Code` | `Series Code`))
+
+#climate_update = read.csv("data/climate_update.csv")
 
 
-
-
-climate2 <- data.frame(t(displacement[-1]))
+#climate2 <- data.frame(t(displacement[-1]))
 #colnames(climate2) <- displacement[, -1]
 
-climate2 <- climate2 %>% 
-  filter(X1 != ".." & X2 != "..")
+#climate2 <- climate2 %>% 
+  #filter(X1 != ".." & X2 != "..")
 
-disp_lm <- lm(X1 ~ X2, data = climate2)
+#disp_lm <- lm(X1 ~ X2, data = climate2)
 
-tidy(disp_lm)
+#tidy(disp_lm)
 
 
 
