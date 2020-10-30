@@ -40,7 +40,7 @@ In order to analyze our data, we will run multiple linear regressions on interna
 Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications. Additionally, we would like to run a Chi-Squared test on the displacement due to disasters and displacement due to conflict. We would like to run this test because it can help us elucidate whether these displacements are related. We would run this test because, if there is a high amount of displacement due to conflict, this could affect the displacement due to disaster, so we would want to see if these variables are independent. 
 
 
-```{r mutate-regions}
+```{r mutate-regions, eval=FALSE}
 #climateData <- climate %>%
   #mutate(MiddleEastAndCentralAsianBelt = ifelse(`Country Name` == "Syrian Arab Republic" | 
         #`Country Name` == "Iraq" | `Country Name` == "Afghanistan" | `Country Name` == "Pakistan" #| 
