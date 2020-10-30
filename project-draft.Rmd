@@ -39,29 +39,6 @@ In order to analyze our data, we will run multiple linear regressions on interna
 
 Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications. Additionally, we would like to run a Chi-Squared test on the displacement due to disasters and displacement due to conflict. We would like to run this test because it can help us elucidate whether these displacements are related. We would run this test because, if there is a high amount of displacement due to conflict, this could affect the displacement due to disaster, so we would want to see if these variables are independent. 
 
-```{r}
-#displacement <- climate %>% 
-  #filter(`Series Name` == "Internally displaced persons, new displacement associated with disasters (number of cases)" | `Series Name` == "Rural population") %>% 
-  #filter(`Country Name` == "Vietnam") %>% 
-  #select(!(`Country Name` | `Country Code` | `Series Code`))
-
-#climate_update = read.csv("data/climate_update.csv")
-
-
-#climate2 <- data.frame(t(displacement[-1]))
-#colnames(climate2) <- displacement[, -1]
-
-#climate2 <- climate2 %>% 
-  #filter(X1 != ".." & X2 != "..")
-
-#disp_lm <- lm(X1 ~ X2, data = climate2)
-
-#tidy(disp_lm)
-
-
-
-```
-
 
 ```{r mutate-regions}
 #climateData <- climate %>%
@@ -89,6 +66,39 @@ climate2 <- data.frame(t(climateData2[-1]))
 
 ```
 
+```{r linear-regression-model}
+climate2 <- climate %>%
+  filter(`Fossil fuel energy consumption (% of total)_15`!= "..") %>%
+  filter(`Population density (people per sq. km of land area)_15` != "..") %>%
+  mutate(fossil_fuel_15 = as.numeric(`Fossil fuel energy consumption (% of total)_15`),
+         population_density_15 = as.numeric(`Population density (people per sq. km of land area)_15`))%>%
+  select(fossil_fuel_15, population_density_15)%>%
+  slice(2:16)
+  
+climate_model <- lm(fossil_fuel_15 ~ population_density_15, data = climate2)
+tidy(climate_model)
+
+```
+
+```{r residual-plot}
+climate_model_aug <- augment(climate_model)
+climate_model_aug %>%
+  slice(1:3)
+
+ggplot(data = climate_model_aug, 
+       aes(x = 1:nrow(climate2), 
+           y = .resid)) + 
+  geom_point() + 
+  labs(x = "Index", y = "Residual")
+```
+
+```{r residual-fitted-plot}
+ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() + 
+  geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
+  labs(x = "Predicted Price", y = "Residuals")
+
+```
 
 ### Results
 
