@@ -7,7 +7,7 @@ output:
 authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ---
 
-```{r loading-pack-reading-data, message=FALSE}
+```{r loading-pack-reading-data, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(broom)
 climate <- read_csv("data/Climate_Filtered_Data.csv")
@@ -41,19 +41,59 @@ In order to analyze our data, we will run multiple linear regressions on interna
 
 Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications. Additionally, we would like to run a Chi-Squared test on the displacement due to disasters and displacement due to conflict. We would like to run this test because it can help us elucidate whether these displacements are related. We would run this test because, if there is a high amount of displacement due to conflict, this could affect the displacement due to disaster, so we would want to see if these variables are independent. 
 
+```{r linear-regression-model}
+climate2 <- climate %>%
+  filter(`Fossil fuel energy consumption (% of total)_15`!= "..") %>%
+  filter(`Population density (people per sq. km of land area)_15` != "..") %>%
+  mutate(fossil_fuel_15 = as.numeric(`Fossil fuel energy consumption (% of total)_15`),
+         population_density_15 = as.numeric(`Population density (people per sq. km of land area)_15`))%>%
+  select(fossil_fuel_15, population_density_15)%>%
+  slice(2:16)
+  
+climate_model <- lm(fossil_fuel_15 ~ population_density_15, data = climate2)
+tidy(climate_model)
 
+climate_model_aug <- augment(climate_model)
+climate_model_aug %>%
+  slice(1:3)
+
+
+```
 
 Since the dataset includes many different predictor variables, it was first necessary to understand which would be the most powerful holding the others constant. In order to make inferences in regression, certain conditions must be met. In order to simplify the process, a simple model with one predictor and one response was created. The first two are linearity which requires that the relationship between the variables and the predictor be linear and equal variance which means that residuals have relatively constant variance. These conditions were checked by creating a basic linear model and plotting the residuals such that we could examine their variance and linearity.
 
-CODE HERE
+```{r residual-fitted-plot}
+
+ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() + 
+  geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
+  labs(x = "Value", y = "Residuals")
+
+```
 
 The next is independence which requires that the residuals be independent.  This is checked very easily by simply plotting all the residuals on a graph. 
 
-CODE HERE
+```{r residual-plot}
+
+ggplot(data = climate_model_aug, 
+       aes(x = 1:nrow(climate2), 
+           y = .resid)) + 
+  geom_point() + 
+  labs(x = "Index", y = "Residual")
+```
 
 The next requirement is that of normality. The checks for this involved both a plotting of the residuals on a histogram as well as the creation of a Q-Q plot. The histogram was examined for a potential relationship between the residuals and the fit of the model to the qq line was checked too. 
 
-CODE HERE
+```{r normality-qq-histogram}
+
+ggplot(climate_model_aug, mapping = aes(sample = .resid)) +
+  stat_qq() + 
+  stat_qq_line()
+
+ggplot(climate_model_aug, mapping = aes(x = .resid)) +
+  geom_histogram(bins = 15) + 
+  labs(x = "Residuals")
+```
 
 Given that the data passed these conditions checks we decided to perform them with a much more complicated model in order to observe the power of our predictors in the presence of each other.  
 
@@ -83,39 +123,8 @@ climate2 <- data.frame(t(climateData2[-1]))
 
 ```
 
-```{r linear-regression-model}
-climate2 <- climate %>%
-  filter(`Fossil fuel energy consumption (% of total)_15`!= "..") %>%
-  filter(`Population density (people per sq. km of land area)_15` != "..") %>%
-  mutate(fossil_fuel_15 = as.numeric(`Fossil fuel energy consumption (% of total)_15`),
-         population_density_15 = as.numeric(`Population density (people per sq. km of land area)_15`))%>%
-  select(fossil_fuel_15, population_density_15)%>%
-  slice(2:16)
-  
-climate_model <- lm(fossil_fuel_15 ~ population_density_15, data = climate2)
-tidy(climate_model)
 
-```
 
-```{r residual-plot}
-climate_model_aug <- augment(climate_model)
-climate_model_aug %>%
-  slice(1:3)
-
-ggplot(data = climate_model_aug, 
-       aes(x = 1:nrow(climate2), 
-           y = .resid)) + 
-  geom_point() + 
-  labs(x = "Index", y = "Residual")
-```
-
-```{r residual-fitted-plot}
-ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .resid)) +
-  geom_point() + 
-  geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
-  labs(x = "Predicted Price", y = "Residuals")
-
-```
 
 ### Results
 
