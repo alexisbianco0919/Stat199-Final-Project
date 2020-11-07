@@ -7,7 +7,7 @@ output:
 authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ---
 
-```{r loading-pack-reading-data, message=FALSE}
+```{r loading-pack-reading-data, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(broom)
 climate <- read_csv("data/Climate_Filtered_Data.csv")
@@ -31,7 +31,7 @@ The intersection of climate change and migration requires comprehensive data ana
 
 Our primary goal in this project is to understand the correlation between climate change indicators and socioeconomic factors, and the resulting displacement. We would like to look at the environmental and socioeconomic data that might predict displacement. For instance, previous literature has indicated that variables such as rainfall, agricultural yield, and low-lying areas may be associated with internal displacement, and we would like to see if the data from the World Development Bank (WDB) are consistent with these claims.
 
-According to the WDB, most of the data from the data set comes directly from each country in the World Bank Group’s national statistical systems. The data itself contains many variables, and the series name tells us the metric for which we are getting data. Within each series, the data is broken down into the data for each nation, and each row below the country name corresponds with that country's data for that series name for each year between 2000-2018. This data set contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. The data set also includes points on conflict, fragility and, most importantly, displacement of people within given countries. Unfortunately, the WDB does not have very complete data for some of the series name variables. However, we will focus mainly on variables that have sufficient data points, unless the variable is unlikely to change much over time, in which case we have decided to turn these into binary variables. 
+According to the WDB, most of the data from the data set comes directly from each country in the World Bank Group’s national statistical systems. The data itself contains many variables, and the series name tells us the metric for which we are getting data. Within each series, the data is broken down into the data for each nation, and each row below the country name corresponds with that country's data for that series name for each year between 2000-2020. This data set contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. The data set also includes points on conflict, fragility and, most importantly, displacement of people within given countries. Unfortunately, the WDB does not have very complete data for some of the series name variables. However, we will focus mainly on variables that have sufficient data points, unless the variable is unlikely to change much over time, in which case we have decided to turn these into binary variables. 
 
 We will start by examining variables in the WDB data such as “Agriculture, forestry, and fishing, value added” (measured in %GDP and %annual growth) to see how important agriculture and these other variables are to the economy of the nation. Other variables include “Urban population living in areas where elevation is below 5 meters (% of total population)”, which will tell us the percentage of people live in low-lying areas. We would also like to see if socioeconomic factors and poverty are better predictors of internal displacement not due to conflict. Then, we will analyze the correlation between displacement and statistics such as prevalence of food security in a nation, people using at least basic drinking water services, and GDP per capita. We hypothesize that the percentage of total population below 5 meters of elevation in island nations, the percentage of total population living in slums, poverty, and falling agricultural output will be the strongest correlates and predictors of displacement of people due to climate in following years in regions identified by The Ecological Threat Register.
 
@@ -41,31 +41,63 @@ In order to analyze our data, we will run multiple linear regressions on interna
 
 Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications. Additionally, we would like to run a Chi-Squared test on the displacement due to disasters and displacement due to conflict. We would like to run this test because it can help us elucidate whether these displacements are related. We would run this test because, if there is a high amount of displacement due to conflict, this could affect the displacement due to disaster, so we would want to see if these variables are independent. 
 
-```{r}
-#displacement <- climate %>% 
-  #filter(`Series Name` == "Internally displaced persons, new displacement associated with disasters (number of cases)" | `Series Name` == "Rural population") %>% 
-  #filter(`Country Name` == "Vietnam") %>% 
-  #select(!(`Country Name` | `Country Code` | `Series Code`))
+```{r linear-regression-model}
+climate2 <- climate %>%
+  filter(`Fossil fuel energy consumption (% of total)_15`!= "..") %>%
+  filter(`Population density (people per sq. km of land area)_15` != "..") %>%
+  mutate(fossil_fuel_15 = as.numeric(`Fossil fuel energy consumption (% of total)_15`),
+         population_density_15 = as.numeric(`Population density (people per sq. km of land area)_15`))%>%
+  select(fossil_fuel_15, population_density_15)%>%
+  slice(2:16)
+  
+climate_model <- lm(fossil_fuel_15 ~ population_density_15, data = climate2)
+tidy(climate_model)
 
-#climate_update = read.csv("data/climate_update.csv")
-
-
-#climate2 <- data.frame(t(displacement[-1]))
-#colnames(climate2) <- displacement[, -1]
-
-#climate2 <- climate2 %>% 
-  #filter(X1 != ".." & X2 != "..")
-
-#disp_lm <- lm(X1 ~ X2, data = climate2)
-
-#tidy(disp_lm)
-
+climate_model_aug <- augment(climate_model)
+climate_model_aug %>%
+  slice(1:3)
 
 
 ```
 
+Since the dataset includes many different predictor variables, it was first necessary to understand which would be the most powerful holding the others constant. In order to make inferences in regression, certain conditions must be met. In order to simplify the process, a simple model with one predictor and one response was created. The first two are linearity which requires that the relationship between the variables and the predictor be linear and equal variance which means that residuals have relatively constant variance. These conditions were checked by creating a basic linear model and plotting the residuals such that we could examine their variance and linearity.
 
-```{r mutate-regions}
+```{r residual-fitted-plot}
+
+ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point() + 
+  geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
+  labs(x = "Value", y = "Residuals")
+
+```
+
+The next is independence which requires that the residuals be independent.  This is checked very easily by simply plotting all the residuals on a graph. 
+
+```{r residual-plot}
+
+ggplot(data = climate_model_aug, 
+       aes(x = 1:nrow(climate2), 
+           y = .resid)) + 
+  geom_point() + 
+  labs(x = "Index", y = "Residual")
+```
+
+The next requirement is that of normality. The checks for this involved both a plotting of the residuals on a histogram as well as the creation of a Q-Q plot. The histogram was examined for a potential relationship between the residuals and the fit of the model to the qq line was checked too. 
+
+```{r normality-qq-histogram}
+
+ggplot(climate_model_aug, mapping = aes(sample = .resid)) +
+  stat_qq() + 
+  stat_qq_line()
+
+ggplot(climate_model_aug, mapping = aes(x = .resid)) +
+  geom_histogram(bins = 15) + 
+  labs(x = "Residuals")
+```
+
+Given that the data passed these conditions checks we decided to perform them with a much more complicated model in order to observe the power of our predictors in the presence of each other.  
+
+```{r mutate-regions, eval=FALSE}
 #climateData <- climate %>%
   #mutate(MiddleEastAndCentralAsianBelt = ifelse(`Country Name` == "Syrian Arab Republic" | 
         #`Country Name` == "Iraq" | `Country Name` == "Afghanistan" | `Country Name` == "Pakistan" #| 
@@ -90,6 +122,8 @@ climate2 <- data.frame(t(climateData2[-1]))
  # filter()
 
 ```
+
+
 
 
 ### Results
