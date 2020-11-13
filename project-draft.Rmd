@@ -47,7 +47,8 @@ climate %>%
   select_at(vars(contains("_10")))
 
 #Mutate country = "pakistan"
-#Save into new file; repeat process; rename the variables to be the same so that r-bind can occur
+#Save into new file; repeat process; rename the variables to be the same so that 
+#r-bind can occur
 
 ```
 
