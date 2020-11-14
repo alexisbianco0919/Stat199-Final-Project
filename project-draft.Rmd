@@ -10,7 +10,7 @@ authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ```{r loading-pack-reading-data, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(broom)
-climate <- read_csv("data/climate_data_final.csv")
+climate <- read_csv("data/climate_data_processed.csv")
 
 #View(climate)
 
@@ -21,7 +21,7 @@ climate <- read_csv("data/climate_data_final.csv")
 
 ```
 
-### Introduction
+### Introduction and Data
 
 As the world struggles to convince so many people about the urgency of climate change it needs to be known that the threat we face is not just that of rising sea levels or CO2 levels—it is that of losing our homes. It is that of entire cities having to uproot and move elsewhere because they can no longer sustain themselves. Far from just a small increase in temperature, but a disruption of our lives as we know it.
 
@@ -37,24 +37,88 @@ We will start by examining variables in the WDB data such as “Agriculture, for
 
 ### Methodology
 
+To visualize climate change predictors within each Middle Eastnrn country over time, we plotted the yearly CO2 emissions, N2O emissions, methane emissions, etc. We also plotted the yearly number of internally displaced people due to natural disaster and number of refugees by country of origin according to the World Bank.
+
+```{r data-processing, warning=F, message = F}
+climate_data <- climate %>%
+  mutate(access_clean_fuels = as.numeric(`Access to clean fuels and technologies for cooking (% of population) [EG.CFT.ACCS.ZS]`),
+         access_electricity = as.numeric(`Access to electricity (% of population) [EG.ELC.ACCS.ZS]`),
+         agr_land = as.numeric(`Agricultural land (% of land area) [AG.LND.AGRI.ZS]`),
+         agr_methane = as.numeric(`Agricultural methane emissions (% of total) [EN.ATM.METH.AG.ZS]`),
+         agr_methane_tons = as.numeric(`Agricultural methane emissions (thousand metric tons of CO2 equivalent) [EN.ATM.METH.AG.KT.CE]`),
+         agr_nitrous = as.numeric(`Agricultural nitrous oxide emissions (% of total) [EN.ATM.NOXE.AG.ZS]`),
+       agr_nitrous_tons = as.numeric(`Agricultural nitrous oxide emissions (thousand metric tons of CO2 equivalent) [EN.ATM.NOXE.AG.KT.CE]`),
+         arable_land = as.numeric(`Arable land (% of land area) [AG.LND.ARBL.ZS]`),
+         avg_precip = as.numeric(`Average precipitation in depth (mm per year) [AG.LND.PRCP.MM]`),
+         co2_tons = as.numeric(`CO2 emissions (metric tons per capita) [EN.ATM.CO2E.PC]`),
+         co2_kt = as.numeric(`CO2 emissions (kt) [EN.ATM.CO2E.KT]`),
+       access_electricity = as.numeric(`Access to electricity (% of population) [EG.ELC.ACCS.ZS]`),
+         forest_area = as.numeric(`Forest area (% of land area) [AG.LND.FRST.ZS]`),
+         fossil_fuel = as.numeric(`Fossil fuel energy consumption (% of total) [EG.USE.COMM.FO.ZS]`),
+         internal_displace = as.numeric(`Internally displaced persons, new displacement associated with disasters (number of cases) [VC.IDP.NWDS]`),
+         land_cereal = as.numeric(`Land under cereal production (hectares) [AG.LND.CREL.HA]`),
+       forest_area = as.numeric(`Forest area (% of land area) [AG.LND.FRST.ZS]`),
+         nitrous_perc = as.numeric(`Nitrous oxide emissions (% change from 1990) [EN.ATM.NOXE.ZG]`),
+         nitrous_tons = as.numeric(`Nitrous oxide emissions (thousand metric tons of CO2 equivalent) [EN.ATM.NOXE.KT.CE]`),
+         othergas = as.numeric(`Other greenhouse gas emissions, HFC, PFC and SF6 (thousand metric tons of CO2 equivalent) [EN.ATM.GHGO.KT.CE]`),
+       pm2.5_mean = as.numeric(`PM2.5 air pollution, mean annual exposure (micrograms per cubic meter) [EN.ATM.PM25.MC.M3]`),
+       pm2.5_who = as.numeric(`PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of total) [EN.ATM.PM25.MC.ZS]`),
+         methane_kt = as.numeric(`Methane emissions (kt of CO2 equivalent) [EN.ATM.METH.KT.CE]`),
+         methane_energy = as.numeric(`Methane emissions in energy sector (thousand metric tons of CO2 equivalent) [EN.ATM.METH.EG.KT.CE]`),
+         refugee = as.numeric(`Refugee population by country or territory of origin [SM.POP.REFG.OR]`),
+         sf6gas = as.numeric(`SF6 gas emissions (thousand metric tons of CO2 equivalent) [EN.ATM.SF6G.KT.CE]`),
+       total_gas = as.numeric(`Total greenhouse gas emissions (kt of CO2 equivalent) [EN.ATM.GHGT.KT.CE]`))%>%
+  select(`Time`, `Country Name`, access_clean_fuels, access_electricity, agr_land, agr_methane, agr_methane_tons, agr_nitrous, agr_nitrous_tons, arable_land, avg_precip, co2_tons, co2_kt, forest_area, fossil_fuel, internal_displace, land_cereal, forest_area, nitrous_perc, nitrous_tons, othergas, pm2.5_mean, pm2.5_who, methane_kt, methane_energy, refugee, sf6gas, total_gas) 
+```
+
+```{r climate-predictors-visualizations}
+climate_internal <-climate_data %>%
+  select(`Time`, `Country Name`, internal_displace)%>%
+  filter(internal_displace != is.na(internal_displace))
+
+ggplot(data = climate_internal, mapping = aes(x = `Time`, y= internal_displace, 
+                                         color = `Country Name`, 
+                                         fill = `Country Name`)) + 
+  geom_point() + labs(x = "Year", 
+                      y = "Internal Displaced Persons due to Disasters", 
+                      title = "Title")
+
+climate_refugee <-climate_data %>%
+  select(`Time`, `Country Name`, refugee)%>%
+  filter(refugee != is.na(refugee))
+
+ggplot(data = climate_refugee, mapping = aes(x = `Time`,
+                                             y= refugee,
+                                      color = `Country Name`, 
+                                      fill = `Country Name`)) + 
+  geom_point() +
+  labs(x = "Year", y = "Refugees by Country of Origin", 
+       title = "Title")
+
+climate_co2 <-climate_data %>%
+  select(`Time`, `Country Name`, co2_tons)%>%
+  filter(co2_tons != is.na(co2_tons))
+
+ggplot(data = climate_co2, mapping = aes(x = `Time`,
+                                             y= co2_tons,
+                                      color = `Country Name`, 
+                                      fill = `Country Name`)) + 
+  geom_line() +
+  labs(x = "Year", y = "Co2 Emissions in Metric Tons per Capita", 
+       title = "Title")
+
+```
+
 In order to analyze our data, we will run multiple linear regressions on internally displaced people associated with disasters and other variables that have been associated with displacement. We will look at regions of countries in the world in order to make the data analysis easier for us. We would like to see which variables are predictors of internal displacement. Seeing these predictors will allow us to easily see which variables are associated with high amounts of displacement due to disaster. Some of the variables that we will focus on include annual rainfall, agricultural yield, and the percentage of land that is low-lying in the country. For some of the variables with fewer data points but are unlikely to change over the past 20 years, such as the percentage of land that is low-lying, we will turn these variables into binary categorical variables. This will allow us to use these variables in our data analysis. 
 
 Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications. Additionally, we would like to run a Chi-Squared test on the displacement due to disasters and displacement due to conflict. We would like to run this test because it can help us elucidate whether these displacements are related. We would run this test because, if there is a high amount of displacement due to conflict, this could affect the displacement due to disaster, so we would want to see if these variables are independent. 
 
-
-```{r}
-climate %>%
-  select_at(vars(contains("_10")))
-
-#Mutate country = "pakistan"
-#Save into new file; repeat process; rename the variables to be the same so that 
-#r-bind can occur
-
+```{r linear-regression model}
+climate_data2 <- climate %>%
+  filter()
 ```
 
-
-
-```{r linear-regression-model}
+```{r linear-regression-model, eval=FALSE}
 climate_pakistan <- climate %>%
   filter(`Fossil fuel energy consumption (% of total)_10`!= "..") %>%
   filter(`CO2 emissions (metric tons per capita)_10` != "..")%>%
@@ -92,8 +156,7 @@ ggplot(climate_pakistan, mapping = aes(x = cereal_production_10, y=refugee_10)) 
 
 Since the dataset includes many different predictor variables, it was first necessary to understand which would be the most powerful holding the others constant. In order to make inferences in regression, certain conditions must be met. In order to simplify the process, a simple model with one predictor and one response was created. The first two are linearity which requires that the relationship between the variables and the predictor be linear and equal variance which means that residuals have relatively constant variance. These conditions were checked by creating a basic linear model and plotting the residuals such that we could examine their variance and linearity.
 
-```{r residual-fitted-plot}
-
+```{r residual-fitted-plot, eval= FALSE}
 ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .resid)) +
   geom_point() + 
   geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
@@ -103,7 +166,7 @@ ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .resid)) +
 
 The next is independence which requires that the residuals be independent.  This is checked very easily by simply plotting all the residuals on a graph. 
 
-```{r residual-plot}
+```{r residual-plot, eval= FALSE}
 
 ggplot(data = climate_model_aug, 
        aes(x = 1:nrow(climate_pakistan), 
@@ -114,7 +177,7 @@ ggplot(data = climate_model_aug,
 
 The next requirement is that of normality. The checks for this involved both a plotting of the residuals on a histogram as well as the creation of a Q-Q plot. The histogram was examined for a potential relationship between the residuals and the fit of the model to the qq line was checked too. 
 
-```{r normality-qq-histogram}
+```{r normality-qq-histogram, eval = FALSE}
 
 ggplot(climate_model_aug, mapping = aes(sample = .resid)) +
   stat_qq() + 
