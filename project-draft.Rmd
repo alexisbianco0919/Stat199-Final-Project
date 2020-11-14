@@ -12,13 +12,6 @@ library(tidyverse)
 library(broom)
 climate <- read_csv("data/climate_data_processed.csv")
 
-#View(climate)
-
-#climate2 <- data.frame(t(climate[-1]))
-#colnames(climate2) <- climate[, -1]
-
-#glimpse(climate2)
-
 ```
 
 ### Introduction and Data
@@ -64,14 +57,17 @@ climate_data <- climate %>%
        pm2.5_mean = as.numeric(`PM2.5 air pollution, mean annual exposure (micrograms per cubic meter) [EN.ATM.PM25.MC.M3]`),
        pm2.5_who = as.numeric(`PM2.5 air pollution, population exposed to levels exceeding WHO guideline value (% of total) [EN.ATM.PM25.MC.ZS]`),
          methane_kt = as.numeric(`Methane emissions (kt of CO2 equivalent) [EN.ATM.METH.KT.CE]`),
-         methane_energy = as.numeric(`Methane emissions in energy sector (thousand metric tons of CO2 equivalent) [EN.ATM.METH.EG.KT.CE]`),
+         methane_tons = as.numeric(`Methane emissions in energy sector (thousand metric tons of CO2 equivalent) [EN.ATM.METH.EG.KT.CE]`),
          refugee = as.numeric(`Refugee population by country or territory of origin [SM.POP.REFG.OR]`),
          sf6gas = as.numeric(`SF6 gas emissions (thousand metric tons of CO2 equivalent) [EN.ATM.SF6G.KT.CE]`),
        total_gas = as.numeric(`Total greenhouse gas emissions (kt of CO2 equivalent) [EN.ATM.GHGT.KT.CE]`))%>%
-  select(`Time`, `Country Name`, access_clean_fuels, access_electricity, agr_land, agr_methane, agr_methane_tons, agr_nitrous, agr_nitrous_tons, arable_land, avg_precip, co2_tons, co2_kt, forest_area, fossil_fuel, internal_displace, land_cereal, forest_area, nitrous_perc, nitrous_tons, othergas, pm2.5_mean, pm2.5_who, methane_kt, methane_energy, refugee, sf6gas, total_gas) 
+  select(`Time`, `Country Name`, arable_land, co2_tons, nitrous_tons, methane_tons, refugee)%>%
+  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
+         `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
+         `Country Name` == "Pakistan" )
 ```
 
-```{r climate-predictors-visualizations}
+```{r climate-predictors-visualizations, eval=FALSE}
 climate_internal <-climate_data %>%
   select(`Time`, `Country Name`, internal_displace)%>%
   filter(internal_displace != is.na(internal_displace))
@@ -113,29 +109,8 @@ In order to analyze our data, we will run multiple linear regressions on interna
 
 Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications. Additionally, we would like to run a Chi-Squared test on the displacement due to disasters and displacement due to conflict. We would like to run this test because it can help us elucidate whether these displacements are related. We would run this test because, if there is a high amount of displacement due to conflict, this could affect the displacement due to disaster, so we would want to see if these variables are independent. 
 
-```{r linear-regression model}
-climate_data2 <- climate %>%
-  filter()
-```
 
 ```{r linear-regression-model, eval=FALSE}
-climate_pakistan <- climate %>%
-  filter(`Fossil fuel energy consumption (% of total)_10`!= "..") %>%
-  filter(`CO2 emissions (metric tons per capita)_10` != "..")%>%
-  filter(`Cereal production (metric tons)_10` != "..")%>%
-  filter(`Population density (people per sq. km of land area)_10` != "..")%>%
-  filter(`Internally displaced persons, new displacement associated with disasters (number of cases)_10` != "..")%>%
-  filter(`Refugee population by country or territory of origin_10` != "..")%>%
-  mutate(fossil_fuel_10 = as.numeric(`Fossil fuel energy consumption (% of total)_10`),
-         CO2_emissions_10 = as.numeric(`CO2 emissions (metric tons per capita)_10`),
-         cereal_production_10 = as.numeric(`Cereal production (metric tons)_10`),
-         population_density_10 = as.numeric(`Population density (people per sq. km of land area)_10`),
-         internal_displacement_10 = as.numeric(`Internally displaced persons, new displacement associated with disasters (number of cases)_10`),
-         refugee_10 = as.numeric(`Refugee population by country or territory of origin_10`))%>%
-  
-  select(fossil_fuel_10, refugee_10, CO2_emissions_10, cereal_production_10, population_density_10, internal_displacement_10)%>%
-  slice(2:8)
-  
 climate_model <- lm(refugee_10 ~ population_density_10 + fossil_fuel_10 + 
                       CO2_emissions_10 + cereal_production_10, 
                     data = climate_pakistan)
@@ -223,9 +198,6 @@ climate2 <- data.frame(t(climateData2[-1]))
  # filter()
 
 ```
-
-
-
 
 ### Results
 
