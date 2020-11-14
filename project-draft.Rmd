@@ -68,41 +68,26 @@ climate_data <- climate %>%
 ```
 
 ```{r climate-predictors-visualizations, eval=FALSE}
-climate_internal <-climate_data %>%
-  select(`Time`, `Country Name`, internal_displace)%>%
-  filter(internal_displace != is.na(internal_displace)) %>% 
-  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
-         `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
-         `Country Name` == "Pakistan" )
+# refugee -----------
 
-ggplot(data = climate_internal, mapping = aes(x = factor(`Time`), y= internal_displace, 
-                                         color = `Country Name`, 
-                                         fill = `Country Name`)) + 
-  geom_point() + labs(x = "Year", 
-                      y = "Internal Displaced Persons due to Disasters", 
-                      title = "Title")
-
-climate_refugee <-climate_data %>%
+climate_refugee <- climate_data %>%
   select(`Time`, `Country Name`, refugee)%>%
-  filter(refugee != is.na(refugee)) %>% 
-  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
-         `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
-         `Country Name` == "Pakistan" )
+  filter(refugee != is.na(refugee)) 
 
 ggplot(data = climate_refugee, mapping = aes(x = `Time`,
                                              y= refugee,
                                       color = `Country Name`, 
                                       fill = `Country Name`)) + 
-  geom_point() +
+  facet_wrap( ~ `Country Name`) +
+  geom_point(size = 0.75) +
   labs(x = "Year", y = "Refugees by Country of Origin", 
        title = "Title")
 
+# co2 -----------
+
 climate_co2 <-climate_data %>%
   select(`Time`, `Country Name`, co2_tons)%>%
-  filter(co2_tons != is.na(co2_tons)) %>% 
-  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
-         `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
-         `Country Name` == "Pakistan" )
+  filter(co2_tons != is.na(co2_tons)) 
 
 ggplot(data = climate_co2, mapping = aes(x = `Time`,
                                              y= co2_tons,
@@ -110,6 +95,46 @@ ggplot(data = climate_co2, mapping = aes(x = `Time`,
                                       fill = `Country Name`)) + 
   geom_line() +
   labs(x = "Year", y = "Co2 Emissions in Metric Tons per Capita", 
+       title = "Title")
+
+# methane -----------
+
+climate_methane <- climate_data %>%
+  select(`Time`, `Country Name`, methane_tons)%>%
+  filter(methane_tons != is.na(methane_tons)) 
+
+ggplot(data = climate_methane, mapping = aes(x = `Time`,
+                                             y= methane_tons,
+                                      color = `Country Name`, 
+                                      fill = `Country Name`)) + 
+  geom_line() +
+  labs(x = "Year", y = "Mehtane Emissions in Metric Tons per Capita", 
+       title = "Title")
+
+# nitrous ----------
+
+climate_methane <- climate_data %>%
+  select(`Time`, `Country Name`, nitrous_tons) %>%
+  filter(nitrous_tons != is.na(nitrous_tons))
+
+ggplot(data = climate_methane, mapping = aes(x = `Time`, y = nitrous_tons,
+                                             color = `Country Name`,
+                                             fill = `Country Name`)) +
+  geom_line() + 
+  labs(x = "Year", y = "Nitrous Emissions in Metric Tons per Capita",
+       title = "Title")
+
+# arable_land ----------
+
+climate_land <- climate_data %>%
+  select(`Time`, `Country Name`, arable_land) %>%
+  filter(arable_land != is.na(arable_land))
+
+ggplot(data = climate_land, mapping = aes(x = `Time`, y = arable_land,
+                                             color = `Country Name`,
+                                             fill = `Country Name`)) +
+  geom_line() + 
+  labs(x = "Year", y = "Arable Land in Percent Per Land Area",
        title = "Title")
 
 ```
