@@ -39,7 +39,7 @@ We will start by examining variables in the WDB data such as “Agriculture, for
 
 To visualize climate change predictors within each Middle Eastnrn country over time, we plotted the yearly CO2 emissions, N2O emissions, methane emissions, etc. We also plotted the yearly number of internally displaced people due to natural disaster and number of refugees by country of origin according to the World Bank.
 
-```{r data-processing, warning=F, message = F}
+```{r data-processing, warning=F, message = F, echo=FALSE}
 climate_data <- climate %>%
   mutate(access_clean_fuels = as.numeric(`Access to clean fuels and technologies for cooking (% of population) [EG.CFT.ACCS.ZS]`),
          access_electricity = as.numeric(`Access to electricity (% of population) [EG.ELC.ACCS.ZS]`),
