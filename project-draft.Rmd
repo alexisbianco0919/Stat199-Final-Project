@@ -70,9 +70,12 @@ climate_data <- climate %>%
 ```{r climate-predictors-visualizations, eval=FALSE}
 climate_internal <-climate_data %>%
   select(`Time`, `Country Name`, internal_displace)%>%
-  filter(internal_displace != is.na(internal_displace))
+  filter(internal_displace != is.na(internal_displace)) %>% 
+  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
+         `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
+         `Country Name` == "Pakistan" )
 
-ggplot(data = climate_internal, mapping = aes(x = `Time`, y= internal_displace, 
+ggplot(data = climate_internal, mapping = aes(x = factor(`Time`), y= internal_displace, 
                                          color = `Country Name`, 
                                          fill = `Country Name`)) + 
   geom_point() + labs(x = "Year", 
@@ -81,7 +84,10 @@ ggplot(data = climate_internal, mapping = aes(x = `Time`, y= internal_displace,
 
 climate_refugee <-climate_data %>%
   select(`Time`, `Country Name`, refugee)%>%
-  filter(refugee != is.na(refugee))
+  filter(refugee != is.na(refugee)) %>% 
+  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
+         `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
+         `Country Name` == "Pakistan" )
 
 ggplot(data = climate_refugee, mapping = aes(x = `Time`,
                                              y= refugee,
@@ -93,7 +99,10 @@ ggplot(data = climate_refugee, mapping = aes(x = `Time`,
 
 climate_co2 <-climate_data %>%
   select(`Time`, `Country Name`, co2_tons)%>%
-  filter(co2_tons != is.na(co2_tons))
+  filter(co2_tons != is.na(co2_tons)) %>% 
+  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
+         `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
+         `Country Name` == "Pakistan" )
 
 ggplot(data = climate_co2, mapping = aes(x = `Time`,
                                              y= co2_tons,
@@ -164,27 +173,6 @@ ggplot(climate_model_aug, mapping = aes(x = .resid)) +
 ```
 
 Given that the data passed these conditions checks we decided to perform them with a much more complicated model in order to observe the power of our predictors in the presence of each other.  
-
-```{r mutate-regions, eval=FALSE}
-#climateData <- climate %>%
-  #mutate(MiddleEastAndCentralAsianBelt = ifelse(`Country Name` == 
-  #"Syrian Arab Republic" | 
-        #`Country Name` == "Iraq" | `Country Name` == "Afghanistan" | 
-  #`Country Name` == "Pakistan" #| 
-       # `Country Name` == "Iran, Islamic Rep.", 1, 0)) %>%
-  #mutate(SouthernAfricanBelt = ifelse(`Country Name` == "Angola" | `
-  #Country Name` == "Zambia" | 
-        #`Country Name` == "Zimbabwe" | `Country Name` == "Mozambique" | 
-  # `Country Name` == "Malawi" |
-       # `Country Name` == "Madagascar", 1, 0)) %>%
-  #mutate(SahelHornBelt = ifelse(`Country Name` == "Senegal" | 
-  #`Country Name` == "Mauritania" | 
-      #  `Country Name` == "Mali" |`Country Name` == "Burkina Faso" | 
-  #`Country Name` == "Niger" | 
-      #  `Country Name` == "Chad" | `Country Name` == "Sudan" | 
-  #`Country Name` == "Eritrea", 1, 0))
-         
-```
 
 
 ```{r, eval =FALSE}
