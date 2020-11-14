@@ -78,8 +78,8 @@ ggplot(data = climate_refugee, mapping = aes(x = `Time`,
                                              y= refugee,
                                       color = `Country Name`, 
                                       fill = `Country Name`)) + 
-  facet_wrap( ~ `Country Name`) +
-  geom_point(size = 0.75) +
+  #facet_wrap( ~ `Country Name`) +
+  geom_line() +
   labs(x = "Year", y = "Refugees by Country of Origin", 
        title = "Title")
 
