@@ -33,7 +33,7 @@ We will start by examining variables in the WDB data such as CO2 emissions (as m
 To visualize climate change predictors within each Middle Eastnrn country over time, we plotted the yearly CO2 emissions, N2O emissions, methane emissions, etc. We also plotted the yearly number of internally displaced people due to natural disaster and number of refugees by country of origin according to the World Bank.
 
 ```{r data-processing, warning=F, message = F, echo=FALSE}
-climate_data <- climate %>%
+climate <- climate %>%
   mutate(access_clean_fuels = as.numeric(`Access to clean fuels and technologies for cooking (% of population) [EG.CFT.ACCS.ZS]`),
          access_electricity = as.numeric(`Access to electricity (% of population) [EG.ELC.ACCS.ZS]`),
          agr_land = as.numeric(`Agricultural land (% of land area) [AG.LND.AGRI.ZS]`),
@@ -61,7 +61,9 @@ climate_data <- climate %>%
          refugee = as.numeric(`Refugee population by country or territory of origin [SM.POP.REFG.OR]`),
          sf6gas = as.numeric(`SF6 gas emissions (thousand metric tons of CO2 equivalent) [EN.ATM.SF6G.KT.CE]`),
        total_gas = as.numeric(`Total greenhouse gas emissions (kt of CO2 equivalent) [EN.ATM.GHGT.KT.CE]`))%>%
-  select(`Time`, `Country Name`, arable_land, land_cereal, co2_tons, nitrous_tons, methane_tons, refugee)%>%
+  select(`Time`, `Country Name`, arable_land, land_cereal, co2_tons, nitrous_tons, methane_tons, refugee)
+
+climate_data <- climate %>%
   filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
          `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
          `Country Name` == "Pakistan" )
@@ -159,9 +161,12 @@ Once we identify some of the better predictors of displacement, we would like to
 
 
 ```{r linear-regression-model, eval=FALSE}
-climate_model <- lm(refugee_10 ~ population_density_10 + fossil_fuel_10 + 
-                      CO2_emissions_10 + cereal_production_10, 
-                    data = climate_pakistan)
+region_climate <- climate %>% 
+  filter(`Country Name` == "Pakistan")
+
+climate_model <- lm(refugee ~ arable_land + land_cereal + co2_tons + 
+                      nitrous_tons + methane_tons,
+                    data = region_climate)
 tidy(climate_model)
 
 climate_model_aug <- augment(climate_model)
@@ -170,10 +175,6 @@ climate_model_aug
 glance(climate_model)%>%
   pull(r.squared)
 
-ggplot(climate_pakistan, mapping = aes(x = cereal_production_10, y=refugee_10)) +
-  geom_point()+
-  geom_smooth(method="lm")
-  labs(x = "Residuals")
 
 ```
 
@@ -192,7 +193,7 @@ The next is independence which requires that the residuals be independent.  This
 ```{r residual-plot, eval= FALSE}
 
 ggplot(data = climate_model_aug, 
-       aes(x = 1:nrow(climate_pakistan), 
+       aes(x = 1:nrow(region_climate), 
            y = .resid)) + 
   geom_point() + 
   labs(x = "Index", y = "Residual")
