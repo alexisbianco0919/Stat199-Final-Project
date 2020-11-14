@@ -61,7 +61,7 @@ climate_data <- climate %>%
          refugee = as.numeric(`Refugee population by country or territory of origin [SM.POP.REFG.OR]`),
          sf6gas = as.numeric(`SF6 gas emissions (thousand metric tons of CO2 equivalent) [EN.ATM.SF6G.KT.CE]`),
        total_gas = as.numeric(`Total greenhouse gas emissions (kt of CO2 equivalent) [EN.ATM.GHGT.KT.CE]`))%>%
-  select(`Time`, `Country Name`, arable_land, co2_tons, nitrous_tons, methane_tons, refugee)%>%
+  select(`Time`, `Country Name`, arable_land, land_cereal, co2_tons, nitrous_tons, methane_tons, refugee)%>%
   filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
          `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
          `Country Name` == "Pakistan" )
@@ -126,16 +126,30 @@ ggplot(data = climate_methane, mapping = aes(x = `Time`, y = nitrous_tons,
 
 # arable_land ----------
 
-climate_land <- climate_data %>%
+climate_arable <- climate_data %>%
   select(`Time`, `Country Name`, arable_land) %>%
   filter(arable_land != is.na(arable_land))
 
-ggplot(data = climate_land, mapping = aes(x = `Time`, y = arable_land,
+ggplot(data = climate_arable, mapping = aes(x = `Time`, y = arable_land,
                                              color = `Country Name`,
                                              fill = `Country Name`)) +
   geom_line() + 
   labs(x = "Year", y = "Arable Land in Percent Per Land Area",
        title = "Title")
+
+# land_cereal ----------
+
+climate_cereal <- climate_data %>%
+  select(`Time`, `Country Name`, land_cereal) %>%
+  filter(land_cereal != is.na(land_cereal))
+
+ggplot(data = climate_cereal, mapping = aes(x = `Time`, y = land_cereal,
+                                             color = `Country Name`,
+                                             fill = `Country Name`)) +
+  geom_line() + 
+  labs(x = "Year", y = "Land Under Cereal Production (Hectacres)",
+       title = "Title")
+
 
 ```
 
