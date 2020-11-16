@@ -10,7 +10,7 @@ authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ```{r loading-pack-reading-data, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(broom)
-climate <- read_csv("data/climate_data_processed.csv")
+climate <- read_csv("data/climate.data.processed.csv")
 ```
 
 ### Introduction and Data
@@ -50,7 +50,6 @@ climate <- climate %>%
          internal_displace = as.numeric(`Internally displaced persons, new displacement associated with disasters (number of cases) [VC.IDP.NWDS]`),
          land_cereal = as.numeric(`Land under cereal production (hectares) [AG.LND.CREL.HA]`),
        forest_area = as.numeric(`Forest area (% of land area) [AG.LND.FRST.ZS]`),
-         nitrous_perc = as.numeric(`Nitrous oxide emissions (% change from 1990) [EN.ATM.NOXE.ZG]`),
          nitrous_tons = as.numeric(`Nitrous oxide emissions (thousand metric tons of CO2 equivalent) [EN.ATM.NOXE.KT.CE]`),
          othergas = as.numeric(`Other greenhouse gas emissions, HFC, PFC and SF6 (thousand metric tons of CO2 equivalent) [EN.ATM.GHGO.KT.CE]`),
        pm2.5_mean = as.numeric(`PM2.5 air pollution, mean annual exposure (micrograms per cubic meter) [EN.ATM.PM25.MC.M3]`),
@@ -59,8 +58,9 @@ climate <- climate %>%
          methane_tons = as.numeric(`Methane emissions in energy sector (thousand metric tons of CO2 equivalent) [EN.ATM.METH.EG.KT.CE]`),
          refugee = as.numeric(`Refugee population by country or territory of origin [SM.POP.REFG.OR]`),
          sf6gas = as.numeric(`SF6 gas emissions (thousand metric tons of CO2 equivalent) [EN.ATM.SF6G.KT.CE]`),
+        pop = as.numeric(`Population, total [SP.POP.TOTL]`),
        total_gas = as.numeric(`Total greenhouse gas emissions (kt of CO2 equivalent) [EN.ATM.GHGT.KT.CE]`))%>%
-  select(`Time`, `Country Name`, arable_land, land_cereal, co2_tons, nitrous_tons, methane_tons, refugee)
+  select(`Time`, `Country Name`, arable_land, land_cereal, co2_tons, nitrous_tons, methane_tons, refugee, pop)
 
 climate_data <- climate %>%
   filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
@@ -82,7 +82,7 @@ ggplot(data = climate_refugee, mapping = aes(x = `Time`,
   #facet_wrap( ~ `Country Name`) +
   geom_line() +
   labs(x = "Year", y = "Refugees by Country of Origin", 
-       title = "Title")
+       title = "Graph 1: Number of refugees in Iran and Pakistan remained relatively similar while those in Afghanistan, Syria, and Iraq increased corresponding to periods of conflict")
 
 # co2 -----------
 
@@ -95,8 +95,8 @@ ggplot(data = climate_co2, mapping = aes(x = `Time`,
                                       color = `Country Name`, 
                                       fill = `Country Name`)) + 
   geom_line() +
-  labs(x = "Year", y = "Co2 Emissions in Metric Tons per Capita", 
-       title = "Title")
+  labs(x = "Year", y = "CO2 Emissions in Metric Tons per Capita", 
+       title = "CO2 emissions in Iran sharply increase after 1980")
 
 # methane -----------
 
@@ -175,11 +175,11 @@ glance(climate_model)%>%
   pull(r.squared)
 
 #Look into using refugee/population rather than raw refugee data
-#LIMITS: look at correlations between predictors; limit would be if multi correlanarity exists among predictor variables
 #Worth conducting model with interactions; Look at p-values for interactions
 #Confidence intervals would be good to see if they could be zero
 
 #FURTHER MODELS/TESTING
+#Look at correlations between predictors; Mention in limitation section: Multicollinearity exists among predictor variables
 #Apply equation to different country; could try to predict a country outside the region and see how well the model predicts refugee numbers
 #Compare refugee numbers between countries from other regions with different climate but that have similar economic status
 #Put refugees in terms of country population and conducting 2 sample t.test; filter out periods of war 
