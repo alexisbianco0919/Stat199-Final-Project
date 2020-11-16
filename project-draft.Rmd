@@ -11,26 +11,25 @@ authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 library(tidyverse)
 library(broom)
 climate <- read_csv("data/climate_data_processed.csv")
-
 ```
 
 ### Introduction and Data
 
 As the world struggles to convince so many people about the urgency of climate change it needs to be known that the threat we face is not just that of rising sea levels or CO2 levels—it is that of losing our homes. It is that of entire cities having to uproot and move elsewhere because they can no longer sustain themselves. Far from just a small increase in temperature, but a disruption of our lives as we know it.
 
-Each year, tens of millions of people are driven from their homes by floods, storms, and droughts. The Ecological Threat Register, conducted by The Sydney-based Institute for Economics and Peace (IEP), measures ecological threats over 157 independent states and territories. The report projects that as many as 1.2 billion people around the world could be displaced by 2050 (Institute for Economics and Peace, 2020). Moreover, adverse effects of global climate change will induce more extreme weather, growing food and water insecurity, and rising sea levels which will cause the number of displaced people to rise (UNHCR, 2019). The report additionally identifies three clusters of ecological hotspots: the Sahel-Horn belt of Africa, from Mauritania to Somalia; the Southern African belt, from Angola to Madagascar, and the Middle East and Central Asian belt, from Syria to Pakistan.
+Each year, tens of millions of people are driven from their homes by floods, storms, and droughts. The Ecological Threat Register, conducted by The Sydney-based Institute for Economics and Peace (IEP), measures ecological threats over 157 independent states and territories. The report projects that as many as 1.2 billion people around the world could be displaced by 2050 (Institute for Economics and Peace, 2020). The adverse effects of global climate change will induce more extreme weather, growing food and water insecurity, and rising sea levels which will cause the number of displaced people to rise (UNHCR, 2019). The IEP report additionally identifies three clusters of ecological hotspots: the Sahel-Horn belt of Africa, from Mauritania to Somalia; the Southern African belt, from Angola to Madagascar, and the Middle East and Central Asian belt, from Syria to Pakistan.
 
 The intersection of climate change and migration requires comprehensive data analysis and solutions to the multidimensional challenges it creates (Podesta, 2019). Therefore, analyzing the dynamics between climate change indicators and displaced people not due to conflict can reveal opportunities for interventions.
 
-Our primary goal in this project is to understand the correlation between climate change indicators and the refugee flow from at-risk countries. In order to make the analysis more manageable, we will focus on the climate change and refugee data of one region.
+Our primary goal in this project is to understand the correlation between climate change indicators and the refugee flow from at-risk countries. In order to make the analysis more manageable, we will focus on the climate change and refugee data of the Middle East region.
 
-According to the WBD (World Bank Database), most of the data from the data set comes directly from each country in the World Bank Group’s national statistical systems. The data itself contains many variables, and the series name tells us the metric for which we are getting data. Within each series, the data is broken down into the data for each nation, and each row below the country name corresponds with that country's data for that series name for each year between 1980-2029. This data set contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. Unfortunately, the WDB does not have very complete data for some of the series name variables. However, we will focus mainly on variables that have sufficient data points, unless the variable is unlikely to change much over time, in which case we have decided to turn these into binary variables. 
+According to the WBD (World Bank Database), most of the data from the data set comes directly from each country in the World Bank Group’s national statistical systems. The data itself contains many variables, and the series name tells us the metric for which we are getting data. Within each series, the data is broken down into the data for each nation, and each row below the country name corresponds with that country's data for that series name for each year between 1980-2029. This data set contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. Unfortunately, the WDB does not have very complete data for some of the variables. However, we will focus mainly on variables that have sufficient data points, unless the variable is unlikely to change much over time, in which case we have decided to turn these into binary variables. 
 
-We will start by examining variables in the WDB data such as CO2 emissions (as measured in kiltons), other greenhouse emissions (in kilotons), percentage of arable land, and overall refugee flow out of the countries. Then, we will analyze the correlation between displacement and climate indicators. The predictors will be used to build a linear model that attempts to explain some of the variance in refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. A model that is able to significantly predict 20% of the variance in refugee flow would be a great result. We hypothesize that CO2 emissions (as measured in kilotons), other greenhouse emissions (in kilotons), and percentage of arable land will be able to explain, with statistical significance, at least 15% of the variance in refugee flow from countries in the Middle East and Central Asian Belt, an at-risk region identified by The Ecological Threat Register.
+We will start by examining variables in the WDB data that scientific literature identifies as climate change predictors such as CO2 emissions (as measured in kiltons), other greenhouse emissions (in kilotons), and percentage of arable land as well as overall refugee flow out of the countries. Then, we will analyze the correlation between displacement and climate indicators. The predictors will be used to build a linear model that attempts to explain some of the variance in refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. A model that is able to significantly predict 20% of the variance in refugee flow would be a useful result. We hypothesize that CO2 emissions (as measured in kilotons), other greenhouse emissions (in kilotons), and percentage of arable land will be able to explain, with statistical significance, at least 15% of the variance in refugee flow from countries in the Middle East and Central Asian Belt, an at-risk region identified by The Ecological Threat Register.
 
 ### Methodology
 
-To visualize climate change predictors within each Middle Eastnrn country over time, we plotted the yearly CO2 emissions, N2O emissions, methane emissions, etc. We also plotted the yearly number of internally displaced people due to natural disaster and number of refugees by country of origin according to the World Bank.
+To visualize climate change predictors within each Middle Eastern country over time, we plotted the yearly CO2 emissions, N2O emissions, methane emissions, etc. We also plotted the yearly number of internally displaced people due to natural disaster and number of refugees by country of origin according to the World Bank.
 
 ```{r data-processing, warning=F, message = F, echo=FALSE}
 climate <- climate %>%
@@ -152,7 +151,7 @@ ggplot(data = climate_cereal, mapping = aes(x = `Time`, y = land_cereal,
   labs(x = "Year", y = "Land Under Cereal Production (Hectacres)",
        title = "Title")
 
-
+#Look into taking out Afghanistan, Syria, Iraq and justify
 ```
 
 In order to analyze our data, we will run multiple linear regressions on internally displaced people associated with disasters and other variables that have been associated with displacement. We will look at regions of countries in the world in order to make the data analysis easier for us. We would like to see which variables are predictors of internal displacement. Seeing these predictors will allow us to easily see which variables are associated with high amounts of displacement due to disaster. Some of the variables that we will focus on include annual rainfall, agricultural yield, and the percentage of land that is low-lying in the country. For some of the variables with fewer data points but are unlikely to change over the past 20 years, such as the percentage of land that is low-lying, we will turn these variables into binary categorical variables. This will allow us to use these variables in our data analysis. 
@@ -161,12 +160,12 @@ Once we identify some of the better predictors of displacement, we would like to
 
 
 ```{r linear-regression-model, eval=FALSE}
-region_climate <- climate %>% 
-  filter(`Country Name` == "Pakistan")
+#region_climate <- climate %>% 
+  #filter(`Country Name` == "Pakistan")
 
-climate_model <- lm(refugee ~ arable_land + land_cereal + co2_tons + 
+climate_model <- lm(log(refugee) ~ arable_land + land_cereal + co2_tons + 
                       nitrous_tons + methane_tons,
-                    data = region_climate)
+                    data = climate_data)
 tidy(climate_model)
 
 climate_model_aug <- augment(climate_model)
@@ -175,13 +174,21 @@ climate_model_aug
 glance(climate_model)%>%
   pull(r.squared)
 
+#Look into using refugee/population rather than raw refugee data
+#LIMITS: look at correlations between predictors; limit would be if multi correlanarity exists among predictor variables
+#Worth conducting model with interactions; Look at p-values for interactions
+#Confidence intervals would be good to see if they could be zero
 
+#FURTHER MODELS/TESTING
+#Apply equation to different country; could try to predict a country outside the region and see how well the model predicts refugee numbers
+#Compare refugee numbers between countries from other regions with different climate but that have similar economic status
+#Put refugees in terms of country population and conducting 2 sample t.test; filter out periods of war 
 ```
 
 Since the dataset includes many different predictor variables, it was first necessary to understand which would be the most powerful holding the others constant. In order to make inferences in regression, certain conditions must be met. In order to simplify the process, a simple model with one predictor and one response was created. The first two are linearity which requires that the relationship between the variables and the predictor be linear and equal variance which means that residuals have relatively constant variance. These conditions were checked by creating a basic linear model and plotting the residuals such that we could examine their variance and linearity.
 
 ```{r residual-fitted-plot, eval= FALSE}
-ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .resid)) +
+ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .std.resid)) +
   geom_point() + 
   geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
   labs(x = "Value", y = "Residuals")
@@ -202,12 +209,11 @@ ggplot(data = climate_model_aug,
 The next requirement is that of normality. The checks for this involved both a plotting of the residuals on a histogram as well as the creation of a Q-Q plot. The histogram was examined for a potential relationship between the residuals and the fit of the model to the qq line was checked too. 
 
 ```{r normality-qq-histogram, eval = FALSE}
-
-ggplot(climate_model_aug, mapping = aes(sample = .resid)) +
+ggplot(climate_model_aug, mapping = aes(sample = .std.resid)) +
   stat_qq() + 
   stat_qq_line()
 
-ggplot(climate_model_aug, mapping = aes(x = .resid)) +
+ggplot(climate_model_aug, mapping = aes(x = .std.resid)) +
   geom_histogram() + 
   labs(x = "Residuals")
 ```
@@ -241,4 +247,4 @@ The significance of the main effects for X X X were Y Y Y respectively. These ar
 
 Overall, this not only served as an excellent exercise for us in applying linear regression to the real world, but also can act as the basis for future work trying to develop a quantitative prediction of refugee flow in the future. 
 
-Limitations and Concerns:? The main concern with the validity of our models here was the lack of data. The World Bank data which was used was missing for several years and we had to develop our regional groupings due to lack of collation on the part of the World Bank. MORE HERE
+Limitations and Concerns: The main concern with the validity of our models here was the lack of data. The World Bank data which was used was missing for several years and we had to develop our regional groupings due to lack of collation on the part of the World Bank. Moreover, robust, comprehensive data on refugee populations from each country doesn't begin until the late 1980s and early 1990s whereas other metrics such as carbon dioxide emissions begin in the 1960s. In addition to the lack of data, the data on refugee populations was a raw sum and didn't disaggregate the data based on reason for refugee status. Further studies on the relationship between climate predictors and displaced populations should look at refugees and displaced people due to climate change. Though the World Bank data includes data for internally displaced people due to disasters, this metric lacks enough data for analysis.  
