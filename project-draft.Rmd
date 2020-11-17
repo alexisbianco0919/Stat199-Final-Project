@@ -78,16 +78,16 @@ climate_me <- climate %>%
 # refugee -----------
 
 climate_refugee <- climate_me %>%
-  select(`Time`, `Country Name`, refugee, prop_refugee)%>%
-  filter(prop_refugee != is.na(prop_refugee)) 
+  select(`Time`, `Country Name`, refugee, refugee_per_100000)%>%
+  filter(refugee_per_100000 != is.na(refugee_per_100000)) 
 
 ggplot(data = climate_refugee, mapping = aes(x = `Time`,
-                                             y= prop_refugee,
+                                             y= refugee_per_100000,
                                       color = `Country Name`, 
                                       fill = `Country Name`)) + 
   #facet_wrap( ~ `Country Name`) +
   geom_line() +
-  labs(x = "Year", y = "Proportion of Refugees by Country of Origin", 
+  labs(x = "Year", y = "Refugees per 100k Population of Country of Origin", 
        title = "Graph 1: Number of refugees in Iran and Pakistan remained
        relatively similar while that in Syria increased sharply after 2011 
        civil war")
@@ -177,7 +177,7 @@ Once we identify some of the better predictors of displacement, we would like to
 
 
 ```{r linear-regression-model, eval=FALSE}
-climate_model <- lm(log(prop_refugee) ~ arable_land + land_cereal + co2_tons + 
+climate_model <- lm(log(prop_refugee) ~ land_cereal + co2_tons + 
                       nitrous_tons + methane_tons,
                     data = climate_data)
 
@@ -207,6 +207,31 @@ climate_model %>%
 The model that we constructed can be seen here:
 
 Refugees as portion of population = MODEL HERE
+
+```{r linear-regression-interactions, eval=FALSE}
+climate_interac <- lm(log(prop_refugee) ~ land_cereal + co2_tons + 
+                      nitrous_tons + methane_tons + co2_tons*nitrous_tons + 
+                        co2_tons*methane_tons + nitrous_tons*methane_tons +
+                        co2_tons*land_cereal,
+                    data = climate_data)
+
+tidy(climate_interac, conf.int = TRUE, conf.level = 0.95)
+
+climate_int_aug <- augment(climate_interac)
+climate_int_aug 
+
+glance(climate_interac)%>%
+  pull(r.squared)
+
+summary(climate_interac)
+
+climate_interac %>%
+  tidy() %>%
+  select(term, estimate) %>%
+  mutate(estimate = round(exp(estimate), 3))
+
+
+```
 
 ### Diagnostic Plots for Linear Regression Model
 
