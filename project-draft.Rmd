@@ -65,7 +65,7 @@ climate <- climate %>%
        total_gas = as.numeric(`Total greenhouse gas emissions (kt of CO2 equivalent) [EN.ATM.GHGT.KT.CE]`))%>%
   mutate(prop_refugee = refugee/pop) %>% 
   mutate(refugee_per_100000 = prop_refugee*100000) %>%
-  select(`Time`, `Country Name`, arable_land, land_cereal, co2_tons, nitrous_tons, methane_tons, refugee, pop, prop_refugee)
+  select(`Time`, `Country Name`, arable_land, land_cereal, co2_tons, nitrous_tons, methane_tons, refugee, pop, prop_refugee, refugee_per_100000)
 
 climate_data <- climate %>%
   filter(`Country Name` == "Afghanistan" | `Country Name` == "Iraq" | `Country Name` == "Iran, Islamic Rep." | `Country Name` == "Pakistan")
