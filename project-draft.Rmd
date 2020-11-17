@@ -10,6 +10,7 @@ authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ```{r loading-pack-reading-data, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(broom)
+library(caret)
 climate <- read_csv("data/climate.data.processed.csv")
 ```
 
@@ -177,6 +178,7 @@ Once we identify some of the better predictors of displacement, we would like to
 climate_model <- lm(log(prop_refugee) ~ arable_land + land_cereal + co2_tons + 
                       nitrous_tons + methane_tons,
                     data = climate_data)
+
 tidy(climate_model, conf.int = TRUE, conf.level = 0.95)
 
 climate_model_aug <- augment(climate_model)
@@ -184,6 +186,11 @@ climate_model_aug
 
 glance(climate_model)%>%
   pull(r.squared)
+
+climate_model %>%
+  tidy() %>%
+  select(term, estimate) %>%
+  mutate(estimate = round(exp(estimate), 3))
 
 #Worth conducting model with interactions; Look at p-values for interactions
 
@@ -229,8 +236,49 @@ ggplot(climate_model_aug, mapping = aes(x = .std.resid)) +
 
 Given that the data passed these conditions checks we decided to perform them with a much more complicated model in order to observe the power of our predictors in the presence of each other.  
 
+### Applying the Model to Another Country 
+
+The other region to which our model can be tested is the Sahel Belt of Africa. This is another region identified by the WORLD REPORT to be an at risk region. It includes Senegal, Mauritania, Mali, Burkina Faso, Niger, Chad, Sudan, Eritrea. These countries have similar conflict levels and similar economic situations thus lending it to another application of our model. 
+
+```{r Sahel-region-creation}
+
+climate_sahel <- climate %>%
+  filter(`Country Name` == "Burkina Faso" | `Country Name` == "Senegal" | 
+           `Country Name` == "Mauritania" | `Country Name` == "Niger" | 
+           `Country Name` == "Mali")
+
+climate_mod_sahel <- lm(log(prop_refugee) ~ arable_land + land_cereal + co2_tons + 
+                      nitrous_tons + methane_tons,
+                    data = climate_sahel)
+
+tidy(climate_mod_sahel, conf.int = TRUE, conf.level = 0.95)
+
+climate_model_aug_sahel <- augment(climate_mod_sahel)
+climate_model_aug_sahel 
+
+glance(climate_mod_sahel)%>%
+  pull(r.squared)
+
+
+climate_mod_sahel %>%
+  tidy() %>%
+  select(term, estimate) %>%
+  mutate(estimate = round(exp(estimate), 3))
+```
+
+
+
 ### Testing for Multicollinearity 
 
+```{r Multicollinearity-tests}
+
+climate_model <- lm(log(prop_refugee) ~ arable_land + land_cereal + co2_tons + 
+                      nitrous_tons + methane_tons,
+                    data = climate_data)
+
+car::vif(climate_model)
+
+```
 
 ### RESULTS
 
