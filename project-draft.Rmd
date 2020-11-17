@@ -86,8 +86,9 @@ ggplot(data = climate_refugee, mapping = aes(x = `Time`,
   #facet_wrap( ~ `Country Name`) +
   geom_line() +
   labs(x = "Year", y = "Proportion of Refugees by Country of Origin", 
-       title = "Graph 1: Number of refugees in Iran and Pakistan remained 
-relatively similar while that in Syria increased sharply after 2011 civil war")
+       title = "Graph 1: Number of refugees in Iran and Pakistan remained
+       relatively similar while that in Syria increased sharply after 2011 
+       civil war")
 
 ```
 
@@ -120,8 +121,8 @@ ggplot(data = climate_methane, mapping = aes(x = `Time`,
                                       fill = `Country Name`)) + 
   geom_line() +
   labs(x = "Year", y = "Methane Emissions in Metric Tons per Capita", 
-       title = "Graph 3: Methane emissions in Afghanistan remaine relatively 
-constant")
+       title = "Graph 3: Methane emissions in Afghanistan remaine relatively
+       constant")
 
 # nitrous ----------
 
@@ -135,7 +136,7 @@ ggplot(data = climate_methane, mapping = aes(x = `Time`, y = nitrous_tons,
   geom_line() + 
   labs(x = "Year", y = "Nitrous Emissions in Metric Tons per Capita",
        title = "Graph 4: Nitrous emissions increase at similar rates for Iran 
-and Pakistan ")
+       and Pakistan ")
 
 # arable_land ----------
 
@@ -149,7 +150,7 @@ ggplot(data = climate_arable, mapping = aes(x = `Time`, y = arable_land,
   geom_line() + 
   labs(x = "Year", y = "Arable Land in Percent Per Land Area",
        title = "Graph 5: Percentage of arable land remained relatively constant 
-for all four countries ")
+       for all four countries ")
 
 # land_cereal ----------
 
