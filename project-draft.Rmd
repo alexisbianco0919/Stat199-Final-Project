@@ -13,7 +13,7 @@ library(broom)
 climate <- read_csv("data/climate.data.processed.csv")
 ```
 
-### Introduction and Data
+### INTRODUCTION AND DATA
 
 As the world struggles to convince so many people about the urgency of climate change it needs to be known that the threat we face is not just that of rising sea levels or CO2 levels—it is that of losing our homes. It is that of entire cities having to uproot and move elsewhere because they can no longer sustain themselves. Far from just a small increase in temperature, but a disruption of our lives as we know it.
 
@@ -27,7 +27,9 @@ According to the WBD (World Bank Database), most of the data from the data set c
 
 We will start by examining variables in the WDB data that scientific literature identifies as climate change predictors such as CO2 emissions (as measured in kiltons), other greenhouse emissions (in kilotons), and percentage of arable land as well as overall refugee flow out of the countries. Then, we will analyze the correlation between displacement and climate indicators. The predictors will be used to build a linear model that attempts to explain some of the variance in refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. A model that is able to significantly predict 20% of the variance in refugee flow would be a useful result. We hypothesize that CO2 emissions (as measured in kilotons), other greenhouse emissions (in kilotons), and percentage of arable land will be able to explain, with statistical significance, at least 15% of the variance in refugee flow from countries in the Middle East and Central Asian Belt, an at-risk region identified by The Ecological Threat Register.
 
-### Methodology
+### METHODOLOGY
+
+### Visualizations
 
 To visualize climate change predictors within each Middle Eastern country over time, we plotted the yearly CO2 emissions, N2O emissions, methane emissions, etc. We also plotted the yearly number of internally displaced people due to natural disaster and number of refugees by country of origin according to the World Bank.
 
@@ -64,26 +66,28 @@ climate <- climate %>%
   select(`Time`, `Country Name`, arable_land, land_cereal, co2_tons, nitrous_tons, methane_tons, refugee, pop, prop_refugee)
 
 climate_data <- climate %>%
-  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iran, Islamic Rep." |
-         `Country Name` == "Iraq" | `Country Name` == "Syrian Arab Republic" |
-         `Country Name` == "Pakistan" )
+  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iraq" | `Country Name` == "Iran, Islamic Rep." | `Country Name` == "Pakistan")
+
+climate_me <- climate %>%
+  filter(`Country Name` == "Afghanistan" | `Country Name` == "Iraq" | `Country Name` == "Iran, Islamic Rep." | `Country Name` == "Pakistan" | `Country Name` == "Syrian Arab Republic" )
 ```
 
 ```{r climate-predictors-visualizations, eval=FALSE}
 # refugee -----------
 
-climate_refugee <- climate_data %>%
-  select(`Time`, `Country Name`, refugee)%>%
-  filter(refugee != is.na(refugee)) 
+climate_refugee <- climate_me %>%
+  select(`Time`, `Country Name`, refugee, prop_refugee)%>%
+  filter(prop_refugee != is.na(prop_refugee)) 
 
 ggplot(data = climate_refugee, mapping = aes(x = `Time`,
-                                             y= refugee,
+                                             y= prop_refugee,
                                       color = `Country Name`, 
                                       fill = `Country Name`)) + 
   #facet_wrap( ~ `Country Name`) +
   geom_line() +
-  labs(x = "Year", y = "Refugees by Country of Origin", 
-       title = "Graph 1: Number of refugees in Iran and Pakistan remained relatively similar while those in Afghanistan, Syria, and Iraq increased corresponding to periods of conflict")
+  labs(x = "Year", y = "Proportion of Refugees by Country of Origin", 
+       title = "Graph 1: Number of refugees in Iran and Pakistan remained 
+relatively similar while that in Syria increased sharply after 2011 civil war")
 
 # co2 -----------
 
@@ -97,7 +101,7 @@ ggplot(data = climate_co2, mapping = aes(x = `Time`,
                                       fill = `Country Name`)) + 
   geom_line() +
   labs(x = "Year", y = "CO2 Emissions in Metric Tons per Capita", 
-       title = "CO2 emissions in Iran sharply increase after 1980")
+       title = "Graph 2: CO2 emissions in Iran sharply increase after 1980")
 
 # methane -----------
 
@@ -110,8 +114,9 @@ ggplot(data = climate_methane, mapping = aes(x = `Time`,
                                       color = `Country Name`, 
                                       fill = `Country Name`)) + 
   geom_line() +
-  labs(x = "Year", y = "Mehtane Emissions in Metric Tons per Capita", 
-       title = "Title")
+  labs(x = "Year", y = "Methane Emissions in Metric Tons per Capita", 
+       title = "Graph 3: Methane emissions in Afghanistan remaine relatively 
+constant")
 
 # nitrous ----------
 
@@ -124,7 +129,8 @@ ggplot(data = climate_methane, mapping = aes(x = `Time`, y = nitrous_tons,
                                              fill = `Country Name`)) +
   geom_line() + 
   labs(x = "Year", y = "Nitrous Emissions in Metric Tons per Capita",
-       title = "Title")
+       title = "Graph 4: Nitrous emissions increase at similar rates for Iran 
+and Pakistan ")
 
 # arable_land ----------
 
@@ -137,7 +143,8 @@ ggplot(data = climate_arable, mapping = aes(x = `Time`, y = arable_land,
                                              fill = `Country Name`)) +
   geom_line() + 
   labs(x = "Year", y = "Arable Land in Percent Per Land Area",
-       title = "Title")
+       title = "Graph 5: Percentage of arable land remained relatively constant 
+for all four countries ")
 
 # land_cereal ----------
 
@@ -150,24 +157,21 @@ ggplot(data = climate_cereal, mapping = aes(x = `Time`, y = land_cereal,
                                              fill = `Country Name`)) +
   geom_line() + 
   labs(x = "Year", y = "Land Under Cereal Production (Hectacres)",
-       title = "Title")
+       title = "Land under ceareal production steadily increased for Pakistan")
 
-#Look into taking out Afghanistan, Syria, Iraq and justify
 ```
 
+### Linear Regression Model with Log Transformation and Assessing Quality of Fit
 In order to analyze our data, we will run multiple linear regressions on internally displaced people associated with disasters and other variables that have been associated with displacement. We will look at regions of countries in the world in order to make the data analysis easier for us. We would like to see which variables are predictors of internal displacement. Seeing these predictors will allow us to easily see which variables are associated with high amounts of displacement due to disaster. Some of the variables that we will focus on include annual rainfall, agricultural yield, and the percentage of land that is low-lying in the country. For some of the variables with fewer data points but are unlikely to change over the past 20 years, such as the percentage of land that is low-lying, we will turn these variables into binary categorical variables. This will allow us to use these variables in our data analysis. 
 
 Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications. Additionally, we would like to run a Chi-Squared test on the displacement due to disasters and displacement due to conflict. We would like to run this test because it can help us elucidate whether these displacements are related. We would run this test because, if there is a high amount of displacement due to conflict, this could affect the displacement due to disaster, so we would want to see if these variables are independent. 
 
 
 ```{r linear-regression-model, eval=FALSE}
-#region_climate <- climate %>% 
-  #filter(`Country Name` == "Pakistan")
-
-climate_model <- lm(log(refugee) ~ arable_land + land_cereal + co2_tons + 
+climate_model <- lm(log(prop_refugee) ~ arable_land + land_cereal + co2_tons + 
                       nitrous_tons + methane_tons,
                     data = climate_data)
-tidy(climate_model)
+tidy(climate_model, conf.int = TRUE, conf.level = 0.95)
 
 climate_model_aug <- augment(climate_model)
 climate_model_aug 
@@ -175,16 +179,15 @@ climate_model_aug
 glance(climate_model)%>%
   pull(r.squared)
 
-#Look into using refugee/population rather than raw refugee data
 #Worth conducting model with interactions; Look at p-values for interactions
-#Confidence intervals would be good to see if they could be zero
 
 #FURTHER MODELS/TESTING
-#Look at correlations between predictors; Mention in limitation section: Multicollinearity exists among predictor variables
 #Apply equation to different country; could try to predict a country outside the region and see how well the model predicts refugee numbers
 #Compare refugee numbers between countries from other regions with different climate but that have similar economic status
-#Put refugees in terms of country population and conducting 2 sample t.test; filter out periods of war 
+#Conducting 2 sample t.test for refugees; filter out periods of war 
 ```
+
+### Diagnostic Plots for Linear Regression Model
 
 Since the dataset includes many different predictor variables, it was first necessary to understand which would be the most powerful holding the others constant. In order to make inferences in regression, certain conditions must be met. In order to simplify the process, a simple model with one predictor and one response was created. The first two are linearity which requires that the relationship between the variables and the predictor be linear and equal variance which means that residuals have relatively constant variance. These conditions were checked by creating a basic linear model and plotting the residuals such that we could examine their variance and linearity.
 
@@ -198,11 +201,10 @@ ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .std.resid)) +
 
 The next is independence which requires that the residuals be independent.  This is checked very easily by simply plotting all the residuals on a graph. 
 
-```{r residual-plot, eval= FALSE}
-
+```{r residual-plot, eval=FALSE}
 ggplot(data = climate_model_aug, 
-       aes(x = 1:nrow(region_climate), 
-           y = .resid)) + 
+       aes(x = 1:nrow(climate_data), 
+           y = .std.resid)) + 
   geom_point() + 
   labs(x = "Index", y = "Residual")
 ```
@@ -221,18 +223,8 @@ ggplot(climate_model_aug, mapping = aes(x = .std.resid)) +
 
 Given that the data passed these conditions checks we decided to perform them with a much more complicated model in order to observe the power of our predictors in the presence of each other.  
 
+### Testing for Multicollinearity 
 
-```{r, eval =FALSE}
-climateData2 <- climateData %>% 
-  filter(`Series Name` == "CO2 emissions (metric tons per capita)" | 
-           `Series Name` == "Net migration" ) 
-  #filter("")
-
-climate2 <- data.frame(t(climateData2[-1]))
-#climate2 %>% 
- # filter()
-
-```
 
 ### Results
 
