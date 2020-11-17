@@ -169,9 +169,10 @@ ggplot(data = climate_cereal, mapping = aes(x = `Time`, y = land_cereal,
 ```
 
 ### Linear Regression Model with Log Transformation and Assessing Quality of Fit
+
 In order to analyze our data, we will run multiple linear regressions on internally displaced people associated with disasters and other variables that have been associated with displacement. We will look at regions of countries in the world in order to make the data analysis easier for us. We would like to see which variables are predictors of internal displacement. Seeing these predictors will allow us to easily see which variables are associated with high amounts of displacement due to disaster. Some of the variables that we will focus on include annual rainfall, agricultural yield, and the percentage of land that is low-lying in the country. For some of the variables with fewer data points but are unlikely to change over the past 20 years, such as the percentage of land that is low-lying, we will turn these variables into binary categorical variables. This will allow us to use these variables in our data analysis. 
 
-Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications. Additionally, we would like to run a Chi-Squared test on the displacement due to disasters and displacement due to conflict. We would like to run this test because it can help us elucidate whether these displacements are related. We would run this test because, if there is a high amount of displacement due to conflict, this could affect the displacement due to disaster, so we would want to see if these variables are independent. 
+Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications.
 
 
 ```{r linear-regression-model, eval=FALSE}
@@ -187,6 +188,8 @@ climate_model_aug
 glance(climate_model)%>%
   pull(r.squared)
 
+summary(climate_model)
+
 climate_model %>%
   tidy() %>%
   select(term, estimate) %>%
@@ -199,6 +202,10 @@ climate_model %>%
 #Compare refugee numbers between countries from other regions with different climate but that have similar economic status
 #Conducting 2 sample t.test for refugees; filter out periods of war 
 ```
+
+The model that we constructed can be seen here:
+
+Refugees as portion of population = MODEL HERE
 
 ### Diagnostic Plots for Linear Regression Model
 
