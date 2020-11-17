@@ -178,9 +178,8 @@ The percentage of arable land remained relatively constant for all four countrie
 
 ### Main Effects Linear Regression Model with Log Transformation and Assessing Quality of Fit
 
-In order to analyze our data, we will run multiple linear regressions on internally displaced people associated with disasters and other variables that have been associated with displacement. We will look at regions of countries in the world in order to make the data analysis easier for us. We would like to see which variables are predictors of internal displacement. Seeing these predictors will allow us to easily see which variables are associated with high amounts of displacement due to disaster. Some of the variables that we will focus on include annual rainfall, agricultural yield, and the percentage of land that is low-lying in the country. For some of the variables with fewer data points but are unlikely to change over the past 20 years, such as the percentage of land that is low-lying, we will turn these variables into binary categorical variables. This will allow us to use these variables in our data analysis. 
+In order to analyze our data, we will construct a multiple linear regression model with percentage of land that is arable, amount of land under cereal production, methane emissions, nitrous emissions, and CO2 emissions (all measured in kilotons per capita) and refugees as percentage of overall population as the response variable.  The model was constructed using data from Afghanistan, Iraq, Iran, and Pakistan. Constructing this model will allow us to see which predictors have the most significant impact on refugee flow from a country. The model used a log transformation of the refugee proportion.
 
-Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications.
 
 
 ```{r linear-regression-model}
@@ -337,7 +336,7 @@ ggplot(data = predicted_values) +
 
 ```{r Multicollinearity-tests}
 
-climate_model <- lm(log(prop_refugee) ~ arable_land + land_cereal + co2_tons + 
+climate_model <- lm(log(prop_refugee) ~ land_cereal + co2_tons + 
                       nitrous_tons + methane_tons,
                     data = climate_data)
 
@@ -375,6 +374,8 @@ The residuals appear to have a normal distribution. Moreover, since the majority
 
 ### Testing for Multicollinearity
 
+The VIF scores of the variables output here indicate high degree of multicollinearity with several of the variables. Everything expect for CO2 emissions had a VIF greater than 5 which was our established level of concern. This was expected given that we were including variables that measured emissions. Something that is a source of emissions is likely not a source for only a single type of emissions meaning that as one type of emissions increases, the other kinds of emissions will also increase. Thus there was a great deal of correlation between our variables. That interaction between the variables made the point predictions in our test data from the Sahel very inaccurrate. Methods for resolving these problems are addressed in the limitations and concerns sections. 
+
 ### DISCUSSION
 
 Given the rapidly accelerating nature of climate change, it is imperative that more data analysis be done on the massive impacts it has. Our goal was to see what climate change factors like CO2 emissions and agricultural outputs would influence refugee flow from a country. Refugee flow was picked as a terminal measure of climate change impacts on a country. With so many people denying that climate change impacts their lives because it just makes some days hotter, we decided to show a very concrete and serious impact on the lives of millions of people.  Using a linear model allowed us to see not only the direct effects of several different variables all at play at once, but also their interactions. In all of the countries we analyzed, climate change was not the only factor that influenced refugee flow. However, the ability to explain even 20% of the variance in something as intensely complicated as refugee flow with a linear model would be quite the feat. In this experiment we were actually able to obtain and adjusted R squared of ADJ R SQUARED HERE. GOOD result: This was surprising and could be due to LIMITATIONS, but the conditions for inference were mostly satisfied leading us to believe we had constructed a robust model. BAD result: While we were not able to construct a model that explained a significant amount of the variance in refugee flow, this was still a good exercise in trying to uncover relationships that could help the general understanding of migration. 
@@ -382,6 +383,8 @@ Given the rapidly accelerating nature of climate change, it is imperative that m
 Our variables were X X X X X. Some like X and X were chosen because they are very obvious markers of human impact on the climate. Additionally X and X were chose because they are downstream markers of anthropogenic climate change that are closer to affecting human lives. There was also an interaction effect between X and X measured for THIS REASON. 
 
 The significance of the main effects for X X X were Y Y Y respectively. These are great results indicating there likely is a relationship between these variables and refugee flow. 
+
+While we did not formally predict a direction for the relationship between our predictors and refugee flow, our general thought was that as markers of climate change worsened (i.e. emissions increased) the refugee flow from a country would increase. However, the opposite was true for some emissions markers, most clearly for CO2 emissions in kilotons per capita. This was likely the case because CO2 emissions are not just a marker of a worsening climate. They are also a marker of the economic development of a country. SOURCE HERE As almost every country in the world has industrialized, their CO2 emissions have increased. Additionally, while the impacts of climate change can take many years to accumulate to a disastrous level, the impacts of rapid economic development can be felt much faster. Those impacts are usually more job opportunities and decreases in poverty, both of which would make someone more likely to stay in the current country of residence. Overall, this data proves a general relationship all over the world which is that rapid economic development may make immediate living situations easier, but it will also have impacts on the environment such as increased emissions. 
 
 Overall, this not only served as an excellent exercise for us in applying linear regression to the real world, but also can act as the basis for future work trying to develop a quantitative prediction of refugee flow in the future. 
 
