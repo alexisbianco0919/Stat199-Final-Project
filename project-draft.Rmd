@@ -347,20 +347,19 @@ car::vif(climate_model)
 ### RESULTS
 
 ### Linear Regression Model with Log 
-Our fitted linear regression model with a logarithmic transformation, where each predictor corresponds to the predicted login of the proportion of refugees in a population, conditionally on all other variables, is as follows: 
+Our fitted main-effects linear regression model with a logarithmic transformation, where each predictor corresponds to the predicted logit of the proportion of refugees in a population, is as follows: 
 
+At the alpha = 0.05 significance level, the fitted log coefficients for each of our predictors in the log transformation relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore, there is sufficient evidence to suggest that the true log coefficients corresponding to the predictor variables hectares of land for cereal production, metric tons of CO2 produced per capita, and kilotons of nitrous oxide produced compared with the log of the proportion of refugees in the country is not equal to 0. There is some relationship between these predictor variables and change in the proportion of refugees in the countries studied. 
 
-At the alpha = 0.05 significance level, the fitted ____ coefficients for each of our dummy variables relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore there is sufficient evidence to suggest that the true slope corresponding to each predictor is not equal to 0. There is some relationship between the predictor variables and the the proportion of refugees. 
+We are particularly interested in testing to see whether there is a log relationship between carbon dioxide emissions and the proportion of refugees in a population. 
 
-We’re particularly interested in _____ which corresponds to the logic relationship between carbon dioxide emissions and the proportion of refugees in a population. 
+H0: There is no relationship between carbon emissions per capita and the log proportion of refugees. The coefficient in the log transformation is 0.
 
-H0:
+H1: There is a relationship between carbon emission per capita and the log proportion of refugees. The coefficient in the log transformation is not 0.
 
-H1:
-
-Under the null hypothesis, our test statistic follows a standard normal distribution. The value of our test statistic is equal to approximately _________, which corresponds to a p-value of ______. Thus, at the $\alpha$ = 0.05, we reject our null hypothesis; we have sufficient evidence to suggest that the true value of ___ not= 0, and that there is a relationship between carbon dioxide emissions and the proportion of refugees in a population. The estimated __ coefficient was _____. Therefore, we would expect proportion of refugees to increase by a factor of _____ (exp(), with 95% CI (___, ____)), holding all other variables constant. The 95% confidence interval for nitrous oxide emissions and methane emissions respectively is (exp(__)) and (exp(____)), which suggests that compared carbon dioxide emissions, nitrous and methane emissions have a lesser impact on the proportion of refugees in a population.
-
-[explanation about linear model with interactions and how it's not useful]
+Under the null hypothesis, our test statistic follows a standard normal distribution. The value of our test statistic is equal to approximately -2.486452, which corresponds to a p-value of 1.446306e-02. Thus, at the $\alpha$ = 0.05, we reject our null hypothesis; we have sufficient evidence to suggest that there is a relationship between the metric tons of CO2 produced per capita and the log of the proportion of refugees. The estimated log transformation coefficient was -3.723390e-01 for CO2 emissions. Therefore, we are 95% confidence that the proportion of refugees to decreases by a factor of `r exp(-6.692271e-01	)` - `r exp(-7.545083e-02)`, holding all other variables constant. The 95% confidence intervals for nitrous oxide emissions and methane emissions respectively are (`r exp(2.614107e-04)` - `r exp(6.385607e-04)`) and (`r exp(-1.197378e-04)` - `r exp(1.068793e-05)`), which suggests that compared carbon dioxide emissions, nitrous and methane emissions have a lesser impact on the proportion of refugees in a population.
+	
+We also tried to use a log transform linear model with interactions between each of the predictor variables, but we found that this model had limited usefulness compared to the model with just main interactions.
 
 ### Diagnostic Plots
 Independence:  The residual plot tests for independence. The residuals exhibit less variance at both extremes of the visualization indicating an abnormal pattern. This may indicate outliers. 
