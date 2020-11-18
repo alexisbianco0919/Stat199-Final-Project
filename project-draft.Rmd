@@ -12,6 +12,7 @@ library(tidyverse)
 library(broom)
 library(caret)
 climate <- read_csv("data/climate.data.processed.csv")
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE)
 ```
 
 ### INTRODUCTION AND DATA
@@ -20,13 +21,11 @@ As the world struggles to convince so many people about the urgency of climate c
 
 Each year, tens of millions of people are driven from their homes by floods, storms, and droughts. The Ecological Threat Register, conducted by The Sydney-based Institute for Economics and Peace (IEP), measures ecological threats over 157 independent states and territories. The report projects that as many as 1.2 billion people around the world could be displaced by 2050 (Institute for Economics and Peace, 2020). The adverse effects of global climate change will induce more extreme weather, growing food and water insecurity, and rising sea levels which will cause the number of displaced people to rise (UNHCR, 2019). The IEP report additionally identifies three clusters of ecological hotspots: the Sahel-Horn belt of Africa, from Mauritania to Somalia; the Southern African belt, from Angola to Madagascar, and the Middle East and Central Asian belt, from Syria to Pakistan.
 
-The intersection of climate change and migration requires comprehensive data analysis and solutions to the multidimensional challenges it creates (Podesta, 2019). Therefore, analyzing the dynamics between climate change indicators and displaced people not due to conflict can reveal opportunities for interventions.
+The intersection of climate change and migration requires comprehensive data analysis and solutions to the multidimensional challenges it creates (Podesta, 2019). Therefore, analyzing the dynamics between climate change predictors and displaced people not due to conflict can reveal opportunities for interventions. Our primary goal in this project is to understand the correlation between climate change indicators and the refugee flow from at-risk countries. In order to focus our analysis and delineate a more specific model, we will focus on relationship between climate change indicators and refugee data in the Middle East and Central Asian belt region, an at-risk region identified by The Ecological Threat Register. 
 
-Our primary goal in this project is to understand the correlation between climate change indicators and the refugee flow from at-risk countries. In order to make the analysis more manageable, we will focus on the climate change and refugee data of the Middle East region.
+Our dataset comes from the World Bank Development Indicators Databank. According to the World Bank, most of the data comes directly from each country in the World Bank Group’s national statistical systems. The raw data itself contains many development indicators, and the series name tells us the metric or variable for which we are getting data. Within each series, the data is broken down into the data for each nation for each year between 1960-2019. The dataset additionally contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. Unfortunately, the WDB does not have very complete data for some of the variables. However, we will focus on variables that have sufficient data, unless the variable is unlikely to change much over time. 
 
-According to the WBD (World Bank Database), most of the data from the data set comes directly from each country in the World Bank Group’s national statistical systems. The data itself contains many variables, and the series name tells us the metric for which we are getting data. Within each series, the data is broken down into the data for each nation, and each row below the country name corresponds with that country's data for that series name for each year between 1980-2029. This data set contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. Unfortunately, the WDB does not have very complete data for some of the variables. However, we will focus mainly on variables that have sufficient data points, unless the variable is unlikely to change much over time, in which case we have decided to turn these into binary variables. 
-
-We will start by examining variables in the WDB data that scientific literature identifies as climate change predictors such as CO2 emissions (as measured in kiltons), other greenhouse emissions (in kilotons), and percentage of arable land as well as overall refugee flow out of the countries. Then, we will analyze the correlation between displacement and climate indicators. The predictors will be used to build a linear model that attempts to explain some of the variance in refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. A model that is able to significantly predict 20% of the variance in refugee flow would be a useful result. We hypothesize that CO2 emissions (as measured in kilotons), other greenhouse emissions (in kilotons), and percentage of arable land will be able to explain, with statistical significance, at least 15% of the variance in refugee flow from countries in the Middle East and Central Asian Belt, an at-risk region identified by The Ecological Threat Register.
+We will start by examining variables in the WDB data that scientific literature identifies as climate change predictors such as CO2 emissions (as measured in kiltons), other greenhouse emissions (in kilotons), land under cereal production, and percentage of arable land. We will also examine refugee flow out of the countries and each country's population. Then, we will analyze the correlation between refugee flow and climate predictors. The predictors will be used to build and evaluate a linear model that attempts to demonstrate if there is a relationship between predictors and refugee flow as well as explain some of the variance in refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. A model that is able to significantly predict 20% of the variance in refugee flow would be a useful result. We hypothesize that CO2 emissions (as measured in kilotons), other greenhouse emissions (in kilotons), land under cereal production, and percentage of arable land will be able to explain, with statistical significance, at least 15% of the variance in refugee flow from countries in the Middle East and Central Asian Belt.
 
 ### METHODOLOGY 
 
@@ -175,17 +174,22 @@ Graphs 2, 3, and 4 demonstrate that the trend for greenhouse gas emissions diffe
 
 The percentage of arable land remained relatively constant for all four countries. Thus, we will not use it as a predictor variable in our model as it won’t have a significant relationship with the size in refugee population.
 
-
 ### Main Effects Linear Regression Model with Log Transformation and Assessing Quality of Fit
 
-In order to analyze our data, we will construct a multiple linear regression model with percentage of land that is arable, amount of land under cereal production, methane emissions, nitrous emissions, and CO2 emissions (all measured in kilotons per capita) and refugees as percentage of overall population as the response variable.  The model was constructed using data from Afghanistan, Iraq, Iran, and Pakistan. Constructing this model will allow us to see which predictors have the most significant impact on refugee flow from a country. The model used a log transformation of the refugee proportion.
-
+In order to analyze our data, we will construct a multiple linear regression model with the amount of land under cereal production, methane emissions, nitrous emissions, and CO2 emissions (all measured in kilotons per capita) as predictor variables and refugees as a proportion of the overall population as the response variable. The model was constructed using data from Afghanistan, Iraq, Iran, and Pakistan. Constructing this model will allow us to investigate the existence and nature of any relationship between the climate change indicators and the refugee flow. It will also allow us to discern which climate change indicators have the most significant impact on refugee flow from a country. Since the distribution of the response variable, proportion of refugees, is skewed, we used a logarithmic transformation in order to more accurately construct a linear model. 
 
 
 ```{r linear-regression-model}
+climate_filtered <- climate_data %>%
+  filter(co2_tons != is.na(co2_tons))%>%
+  filter(land_cereal != is.na(land_cereal))%>%
+  filter(methane_tons != is.na(methane_tons))%>%
+  filter(nitrous_tons != is.na(nitrous_tons))%>%
+  filter(!is.na(refugee))
+  
 climate_model <- lm(log(prop_refugee) ~ land_cereal + co2_tons + 
                       nitrous_tons + methane_tons,
-                    data = climate_data)
+                    data = climate_filtered)
 
 tidy(climate_model, conf.int = TRUE, conf.level = 0.95)
 
@@ -205,33 +209,97 @@ climate_model %>%
 
 The model that we constructed can be seen here:
 
-Refugees as portion of population = MODEL HERE
+Predicted proportion of refugees = e^(7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01
+* co2_tons + 4.499857e-04 * nitrous_tons + -5.452494e-05 * methane_tons)
 
-We obtained the following 95% of confidence intervals for the logit slope corresponding to each predictor conditional on all other predictors in our model: 
+We obtained the following 95% of confidence intervals for the slope corresponding to each predictor variable conditional on all other predictors in our model: 
+
+Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`), CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`), N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`), Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
 
 
 ```{r visualizing-predicted-values}
-climate_filtered <- climate_data %>%
-  filter(co2_tons != is.na(co2_tons))%>%
-  filter(land_cereal != is.na(land_cereal))%>%
-  filter(methane_tons != is.na(methane_tons))%>%
-  filter(nitrous_tons != is.na(nitrous_tons))%>%
-  filter(!is.na(refugee))
-
 predicted_values <- climate_filtered %>%
-  mutate(predicted_refugee = 2.015 + land_cereal + 0.689* co2_tons + nitrous_tons +methane_tons)
+  mutate(predicted_refugee = exp(
+7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01
+* co2_tons + 4.499857e-04 *nitrous_tons + -5.452494e-05* methane_tons))
 
-ggplot(data = predicted_values) +
-  geom_point(mapping = aes(x = `Time`, y = predicted_refugee)) + 
-  geom_point(mapping = aes(x = `Time`, y = prop_refugee,
-                                             color = "dark blue",
-                                             fill = "dark blue"))
-  labs(x = "Year", y = "Predicted Proportion of the Refugee",
-       title = "Predicted proportion of refugees in a population")
+predicted_iran <- predicted_values %>%
+  filter (`Country Name` == "Iran, Islamic Rep.")
+
+ggplot(data = predicted_iran) +
+  geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
+  geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
+  labs(x = "Year", y = "Proportion of refugees in Iran",
+       title = "Predicted proportion of refugees in Iran relatively similar 
+to observed proportion aside from 2 major outliers")
+
+predicted_afghan <- predicted_values %>%
+  filter (`Country Name` == "Afghanistan")
+
+ggplot(data = predicted_afghan) +
+  geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
+  geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
+  labs(x = "Year", y = "Proportion of refugees in Afghanistan",
+       title = "Predicted proportion of refugees in Afghanistan largely below observed proportion until 1995")
+
+predicted_pak <- predicted_values %>%
+  filter (`Country Name` == "Pakistan")
+
+ggplot(data = predicted_pak) +
+  geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
+  geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
+  labs(x = "Year", y = "Proportion of refugees in Pakistan",
+       title = "Predicted proportion of refugees in Pakistan above observed value until 2002")
+
+predicted_iraq <- predicted_values %>%
+  filter (`Country Name` == "Iraq")
+
+ggplot(data = predicted_iraq) +
+  geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
+  geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
+  labs(x = "Year", y = "Proportion of refugees in Iraq",
+       title = "Predicted proportion of refugees in Iraq relatively similar 
+to observed proportion aside from 1 major outliers")
+```
+
+### Diagnostic Plots for Main Effects Linear Regression Model with Log Transformation 
+
+Since the dataset includes many different predictor variables, it was first necessary to understand which would be the most powerful holding the others constant. In order to make inferences in regression, certain conditions must be met. The first two conditions that must be met are linearity which means the relationship between the variables and the predictors be linear and equal variance which means that residuals have relatively constant variance. These conditions were checked by creating a basic linear model and plotting the residuals such that we could examine their variance and linearity.
+
+```{r residual-fitted-plot}
+ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .std.resid)) +
+  geom_point() + 
+  geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
+  labs(x = "Value", y = "Residuals")
+
 ```
 
 
-Next we constructed a linear regression model with a logarithmic transformation and with interactions to better understand the relationship between the predictor variables. 
+The next condition is independence which requires that the residuals be independent. We will evaluate independence by simply plotting all the residuals on a graph. 
+
+```{r residual-plot-independence}
+ggplot(data = climate_model_aug, 
+       aes(x = 1:nrow(climate_filtered), 
+           y = .std.resid)) + 
+  geom_point() + 
+  labs(x = "Index", y = "Residual")
+```
+
+The next requirement is that of normality. The checks for this involved both a plotting of the residuals on a histogram as well as the creation of a Q-Q plot. The histogram was examined for a potential relationship between the residuals and the fit of the model to the qq line was checked too. 
+
+```{r normality-qq-histogram}
+ggplot(climate_model_aug, mapping = aes(sample = .std.resid)) +
+  stat_qq() + 
+  stat_qq_line()
+
+ggplot(climate_model_aug, mapping = aes(x = .std.resid)) +
+  geom_histogram() + 
+  labs(x = "Residuals")
+```
+
+### Multiple Linear Regression Model with Log Transformation and Interactions 
+
+Next, we constructed a linear regression model with a logarithmic transformation and with interactions between the three greenhouse gas emissions to better understand the relationship between the predictor variables. 
 
 ```{r linear-regression-interactions}
 climate_interac <- lm(log(prop_refugee) ~ land_cereal + co2_tons + 
@@ -259,80 +327,14 @@ climate_interac %>%
 
 The model that we constructed can be seen here:
 
-Refugees as portion of population = MODEL HERE
+Predicted proportion of refugees = e^(2.045090 - 1.847728e-06 * land_cereal - 1.063508e-01 * co2_tons + 4.085926e-04 * nitrous_tons - 2.798573e-04 * methane_tons - 9.918373e-05 (co2_tons * nitrous_tons) - 5.249514e-06 (co2_tons * methane_tons) + 1.189883e-08 (nitrous_tons * methane_tons) * 2.565460e-07 (land_cereal * co2_tons))
 
-We obtained the following 95% of confidence intervals for the logit slope corresponding to each predictor conditional on all other predictors in our model: 
+We obtained the following 95% of confidence intervals for the slope corresponding to each predictor conditional on all other predictors in our model: 
 
-
-### Diagnostic Plots for Main Effects Linear Regression Model with Log Transformation 
-
-Since the dataset includes many different predictor variables, it was first necessary to understand which would be the most powerful holding the others constant. In order to make inferences in regression, certain conditions must be met. In order to simplify the process, a simple model with one predictor and one response was created. The first two are linearity which requires that the relationship between the variables and the predictor be linear and equal variance which means that residuals have relatively constant variance. These conditions were checked by creating a basic linear model and plotting the residuals such that we could examine their variance and linearity.
-
-```{r residual-fitted-plot, eval= FALSE}
-ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .std.resid)) +
-  geom_point() + 
-  geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
-  labs(x = "Value", y = "Residuals")
-
-```
-
-The next is independence which requires that the residuals be independent.  This is checked very easily by simply plotting all the residuals on a graph. 
-
-```{r residual-plot, eval=FALSE}
-ggplot(data = climate_model_aug, 
-       aes(x = 1:nrow(climate_data), 
-           y = .std.resid)) + 
-  geom_point() + 
-  labs(x = "Index", y = "Residual")
-```
-
-The next requirement is that of normality. The checks for this involved both a plotting of the residuals on a histogram as well as the creation of a Q-Q plot. The histogram was examined for a potential relationship between the residuals and the fit of the model to the qq line was checked too. 
-
-```{r normality-qq-histogram, eval = FALSE}
-ggplot(climate_model_aug, mapping = aes(sample = .std.resid)) +
-  stat_qq() + 
-  stat_qq_line()
-
-ggplot(climate_model_aug, mapping = aes(x = .std.resid)) +
-  geom_histogram() + 
-  labs(x = "Residuals")
-```
-
-Given that the data passed these conditions checks we decided to perform them with a much more complicated model in order to observe the power of our predictors in the presence of each other.  
-
-### Applying the Model to Another Country 
-
-The other region to which our model can be tested is the Sahel Belt of Africa. This is another region identified by the WORLD REPORT to be an at risk region. It includes Senegal, Mauritania, Mali, Burkina Faso, Niger, Chad, Sudan, Eritrea. These countries have similar conflict levels and similar economic situations thus lending it to another application of our model. 
-
-```{r Sahel-region-creation}
-climate_sahel <- climate %>%
-  filter(`Country Name` == "Burkina Faso" | `Country Name` == "Senegal" | 
-           `Country Name` == "Mauritania" | `Country Name` == "Niger" | 
-           `Country Name` == "Mali")
-```
-
-```{r visualizing-predicted-values-sahel-region}
-climate_filtered <- climate_data %>%
-  filter(co2_tons != is.na(co2_tons))%>%
-  filter(land_cereal != is.na(land_cereal))%>%
-  filter(methane_tons != is.na(methane_tons))%>%
-  filter(nitrous_tons != is.na(nitrous_tons))%>%
-  filter(!is.na(refugee))
-
-predicted_values <- climate_filtered %>%
-  mutate(predicted_refugee = 2.015 + land_cereal + 0.689* co2_tons + nitrous_tons +methane_tons)
-
-ggplot(data = predicted_values) +
-  geom_point(mapping = aes(x = `Time`, y = predicted_refugee)) + 
-  geom_point(mapping = aes(x = `Time`, y = prop_refugee,
-                                             color = "dark blue",
-                                             fill = "dark blue"))
-  labs(x = "Year", y = "Predicted Proportion of the Refugee",
-       title = "Predicted proportion of refugees in a population")
-```
-
+Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`), CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`), N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`), Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
 
 ### Testing for Multicollinearity 
+To further analyze the relationship between the predictor variables, we tested for mutlicollinearity. This was to determine if two or more explanatory variables in our multiple regression model were highly linearly related.
 
 ```{r Multicollinearity-tests}
 
@@ -344,10 +346,47 @@ car::vif(climate_model)
 
 ```
 
+### Applying the Model to Another Country 
+
+To further evaluate our model, we applied it to another at risk region as identified by the Ecological Threat Register, the Sahel Belt of Africa. The Sahel Belt includes Senegal, Mauritania, Mali, Burkina Faso, Niger, Chad, Sudan, Eritrea. These countries have similar conflict levels and similar economic situations thus lending it to another application of our model. 
+
+```{r Sahel-region-creation}
+climate_sahel <- climate %>%
+  filter(`Country Name` == "Burkina Faso" | `Country Name` == "Senegal" | 
+           `Country Name` == "Mauritania" | `Country Name` == "Niger" | 
+           `Country Name` == "Mali")
+```
+
+```{r visualizing-predicted-values-sahel-region}
+climate_filtered_sahel <- climate_sahel %>%
+  filter(co2_tons != is.na(co2_tons))%>%
+  filter(land_cereal != is.na(land_cereal))%>%
+  filter(methane_tons != is.na(methane_tons))%>%
+  filter(nitrous_tons != is.na(nitrous_tons))%>%
+  filter(!is.na(refugee))%>%
+  filter(`Country Name` == "Burkina Faso")
+
+predicted_values <- climate_filtered_sahel %>%
+  mutate(predicted_refugee = exp(
+7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01
+* co2_tons + 4.499857e-04 *nitrous_tons + -5.452494e-05* methane_tons))
+
+ggplot(data = predicted_values) +
+  geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
+  geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
+  labs(x = "Year", y = "Proportion of refugees in Burkina Faso",
+       title = "Predicted proportion of refugees in Burkina Faso higher than observed proportion of refugees")
+```
+
+
 ### RESULTS
 
-### Linear Regression Model with Log 
-Our fitted main-effects linear regression model with a logarithmic transformation, where each predictor corresponds to the predicted logit of the proportion of refugees in a population, is as follows: 
+### Main Effects Linear Regression Model with Log Transformation and Assessing Quality of Fit
+
+Our fitted main-effects multiple linear regression model with a logarithmic transformation is as follows: 
+
+Predicted proportion of refugees = e^(7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01
+* co2_tons + 4.499857e-04 * nitrous_tons + -5.452494e-05 * methane_tons))
 
 At the alpha = 0.05 significance level, the fitted log coefficients for each of our predictors in the log transformation relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore, there is sufficient evidence to suggest that the true log coefficients corresponding to the predictor variables hectares of land for cereal production, metric tons of CO2 produced per capita, and kilotons of nitrous oxide produced compared with the log of the proportion of refugees in the country is not equal to 0. There is some relationship between these predictor variables and change in the proportion of refugees in the countries studied. 
 
@@ -358,22 +397,27 @@ H0: There is no relationship between carbon emissions per capita and the log pro
 H1: There is a relationship between carbon emission per capita and the log proportion of refugees. The coefficient in the log transformation is not 0.
 
 Under the null hypothesis, our test statistic follows a standard normal distribution. The value of our test statistic is equal to approximately -2.486452, which corresponds to a p-value of 1.446306e-02. Thus, at the $\alpha$ = 0.05, we reject our null hypothesis; we have sufficient evidence to suggest that there is a relationship between the metric tons of CO2 produced per capita and the log of the proportion of refugees. The estimated log transformation coefficient was -3.723390e-01 for CO2 emissions. Therefore, we are 95% confidence that the proportion of refugees to decreases by a factor of `r exp(-6.692271e-01	)` - `r exp(-7.545083e-02)`, holding all other variables constant. The 95% confidence intervals for nitrous oxide emissions and methane emissions respectively are (`r exp(2.614107e-04)` - `r exp(6.385607e-04)`) and (`r exp(-1.197378e-04)` - `r exp(1.068793e-05)`), which suggests that compared carbon dioxide emissions, nitrous and methane emissions have a lesser impact on the proportion of refugees in a population.
-	
-We also tried to use a log transform linear model with interactions between each of the predictor variables, but we found that this model had limited usefulness compared to the model with just main interactions.
 
-### Diagnostic Plots
-Independence:  The residual plot tests for independence. The residuals exhibit less variance at both extremes of the visualization indicating an abnormal pattern. This may indicate outliers. 
+The adjusted coefficient of determination (r squared) for the linear regression model was 0.792. This means 79.2% of the variability in the proportion of refugees can be explained by the model. The adjusted coefficient of determination was used since our model uses multiple predictors. 
 
-Linearity: There is an approximately symmetric distribution above and below the y=0 line. However, the vertical variation or spread of the residuals is not approximately equal. There is less variance at the extremes of the plot indicating that there is not equal variance. 
+### Diagnostic Plots for Main Effects Linear Regression Model with Log Transformation 
+Independence:  The residuals do not exhibit any pattern or abnormal clusters. 
 
-Normality: 
-The residuals appear to have a normal distribution. Moreover, since the majority of residuals appear along the theoretical normal distribution line, there is evidence of normality.
+Linearity: There is an approximately symmetric distribution above and below the y=0 line. 
 
-### Applying Model to Another Country
+Equal Variance: The vertical variation or spread of the residuals is not approximately equal. There is less variance at the extremes of the plot indicating that there is not equal variance. 
+
+Normality: The residuals appear to have a normal distribution. 
+
+### Multiple Linear Regression Model with Log Transformation and Interactions 
+
+We also constructed a linear model with interactions between each of the predictor variables and a logarithmic transformation. Each interaction tested (CO2 emissions and N2O emissions, CO2 emissions and methane emissions, N2O emissions and methane emissions, and land under cereal production and CO2 emissions) in addition to nitrous oxide gas emissions and methane emissions, only increased the proportion of refugees by a factor of 1 holding all other variables constant. Thus, we found that this model had limited usefulness compared to the model that analyzed main effects. 
 
 ### Testing for Multicollinearity
 
 The VIF scores of the variables output here indicate high degree of multicollinearity with several of the variables. Everything expect for CO2 emissions had a VIF greater than 5 which was our established level of concern. This was expected given that we were including variables that measured emissions. Something that is a source of emissions is likely not a source for only a single type of emissions meaning that as one type of emissions increases, the other kinds of emissions will also increase. Thus there was a great deal of correlation between our variables. That interaction between the variables made the point predictions in our test data from the Sahel very inaccurrate. Methods for resolving these problems are addressed in the limitations and concerns sections. 
+
+### Applying Model to Another Country
 
 ### DISCUSSION
 
