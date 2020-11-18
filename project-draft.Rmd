@@ -171,14 +171,19 @@ ggplot(data = climate_cereal, mapping = aes(x = `Time`, y = land_cereal,
 
 ```
 
-### Linear Regression Model with Log Transformation and Assessing Quality of Fit
+Graphs 2, 3, and 4 demonstrate that the trend for greenhouse gas emissions differs for each country. Carbon dioxide, nitrous oxide, and methane emissions generally increase in Iran over time. Nitrous oxide emissions for Iraq and Afghanistan increased slightly and percentage of arable land remained relatively constant for all four countries. The percentage of land under cereal production steadily increased for Pakistan while it fluctuated for Iran and Iraq and dipped slightly for Afghanistan. 
+
+The percentage of arable land remained relatively constant for all four countries. Thus, we will not use it as a predictor variable in our model as it won’t have a significant relationship with the size in refugee population.
+
+
+### Main Effects Linear Regression Model with Log Transformation and Assessing Quality of Fit
 
 In order to analyze our data, we will run multiple linear regressions on internally displaced people associated with disasters and other variables that have been associated with displacement. We will look at regions of countries in the world in order to make the data analysis easier for us. We would like to see which variables are predictors of internal displacement. Seeing these predictors will allow us to easily see which variables are associated with high amounts of displacement due to disaster. Some of the variables that we will focus on include annual rainfall, agricultural yield, and the percentage of land that is low-lying in the country. For some of the variables with fewer data points but are unlikely to change over the past 20 years, such as the percentage of land that is low-lying, we will turn these variables into binary categorical variables. This will allow us to use these variables in our data analysis. 
 
 Once we identify some of the better predictors of displacement, we would like to run two sample hypothesis tests to see if there are differences in certain variables in countries that are prone to displacement. Specifically, we could run two sample hypothesis tests between high- and low-displacement regions as mentioned in the introduction with relation to certain predictor variables. This way, we could see the extent to how different these variables are for these two classifications.
 
 
-```{r linear-regression-model, eval=FALSE}
+```{r linear-regression-model}
 climate_model <- lm(log(prop_refugee) ~ land_cereal + co2_tons + 
                       nitrous_tons + methane_tons,
                     data = climate_data)
@@ -196,21 +201,40 @@ summary(climate_model)
 climate_model %>%
   tidy() %>%
   select(term, estimate) %>%
-  mutate(estimate = round(exp(estimate), 3))
-
-#Worth conducting model with interactions; Look at p-values for interactions
-
-#FURTHER MODELS/TESTING
-#Apply equation to different country; could try to predict a country outside the region and see how well the model predicts refugee numbers
-#Compare refugee numbers between countries from other regions with different climate but that have similar economic status
-#Conducting 2 sample t.test for refugees; filter out periods of war 
+  mutate(estimate = round(exp(estimate), 6))
 ```
 
 The model that we constructed can be seen here:
 
 Refugees as portion of population = MODEL HERE
 
-```{r linear-regression-interactions, eval=FALSE}
+We obtained the following 95% of confidence intervals for the logit slope corresponding to each predictor conditional on all other predictors in our model: 
+
+
+```{r visualizing-predicted-values}
+climate_filtered <- climate_data %>%
+  filter(co2_tons != is.na(co2_tons))%>%
+  filter(land_cereal != is.na(land_cereal))%>%
+  filter(methane_tons != is.na(methane_tons))%>%
+  filter(nitrous_tons != is.na(nitrous_tons))%>%
+  filter(!is.na(refugee))
+
+predicted_values <- climate_filtered %>%
+  mutate(predicted_refugee = 2.015 + land_cereal + 0.689* co2_tons + nitrous_tons +methane_tons)
+
+ggplot(data = predicted_values) +
+  geom_point(mapping = aes(x = `Time`, y = predicted_refugee)) + 
+  geom_point(mapping = aes(x = `Time`, y = prop_refugee,
+                                             color = "dark blue",
+                                             fill = "dark blue"))
+  labs(x = "Year", y = "Predicted Proportion of the Refugee",
+       title = "Predicted proportion of refugees in a population")
+```
+
+
+Next we constructed a linear regression model with a logarithmic transformation and with interactions to better understand the relationship between the predictor variables. 
+
+```{r linear-regression-interactions}
 climate_interac <- lm(log(prop_refugee) ~ land_cereal + co2_tons + 
                       nitrous_tons + methane_tons + co2_tons*nitrous_tons + 
                         co2_tons*methane_tons + nitrous_tons*methane_tons +
@@ -232,10 +256,16 @@ climate_interac %>%
   select(term, estimate) %>%
   mutate(estimate = round(exp(estimate), 3))
 
-
 ```
 
-### Diagnostic Plots for Linear Regression Model
+The model that we constructed can be seen here:
+
+Refugees as portion of population = MODEL HERE
+
+We obtained the following 95% of confidence intervals for the logit slope corresponding to each predictor conditional on all other predictors in our model: 
+
+
+### Diagnostic Plots for Main Effects Linear Regression Model with Log Transformation 
 
 Since the dataset includes many different predictor variables, it was first necessary to understand which would be the most powerful holding the others constant. In order to make inferences in regression, certain conditions must be met. In order to simplify the process, a simple model with one predictor and one response was created. The first two are linearity which requires that the relationship between the variables and the predictor be linear and equal variance which means that residuals have relatively constant variance. These conditions were checked by creating a basic linear model and plotting the residuals such that we could examine their variance and linearity.
 
@@ -276,31 +306,31 @@ Given that the data passed these conditions checks we decided to perform them wi
 The other region to which our model can be tested is the Sahel Belt of Africa. This is another region identified by the WORLD REPORT to be an at risk region. It includes Senegal, Mauritania, Mali, Burkina Faso, Niger, Chad, Sudan, Eritrea. These countries have similar conflict levels and similar economic situations thus lending it to another application of our model. 
 
 ```{r Sahel-region-creation}
-
 climate_sahel <- climate %>%
   filter(`Country Name` == "Burkina Faso" | `Country Name` == "Senegal" | 
            `Country Name` == "Mauritania" | `Country Name` == "Niger" | 
            `Country Name` == "Mali")
-
-climate_mod_sahel <- lm(log(prop_refugee) ~ arable_land + land_cereal + co2_tons + 
-                      nitrous_tons + methane_tons,
-                    data = climate_sahel)
-
-tidy(climate_mod_sahel, conf.int = TRUE, conf.level = 0.95)
-
-climate_model_aug_sahel <- augment(climate_mod_sahel)
-climate_model_aug_sahel 
-
-glance(climate_mod_sahel)%>%
-  pull(r.squared)
-
-
-climate_mod_sahel %>%
-  tidy() %>%
-  select(term, estimate) %>%
-  mutate(estimate = round(exp(estimate), 3))
 ```
 
+```{r visualizing-predicted-values-sahel-region}
+climate_filtered <- climate_data %>%
+  filter(co2_tons != is.na(co2_tons))%>%
+  filter(land_cereal != is.na(land_cereal))%>%
+  filter(methane_tons != is.na(methane_tons))%>%
+  filter(nitrous_tons != is.na(nitrous_tons))%>%
+  filter(!is.na(refugee))
+
+predicted_values <- climate_filtered %>%
+  mutate(predicted_refugee = 2.015 + land_cereal + 0.689* co2_tons + nitrous_tons +methane_tons)
+
+ggplot(data = predicted_values) +
+  geom_point(mapping = aes(x = `Time`, y = predicted_refugee)) + 
+  geom_point(mapping = aes(x = `Time`, y = prop_refugee,
+                                             color = "dark blue",
+                                             fill = "dark blue"))
+  labs(x = "Year", y = "Predicted Proportion of the Refugee",
+       title = "Predicted proportion of refugees in a population")
+```
 
 
 ### Testing for Multicollinearity 
@@ -317,7 +347,33 @@ car::vif(climate_model)
 
 ### RESULTS
 
+### Linear Regression Model with Log 
+Our fitted linear regression model with a logarithmic transformation, where each predictor corresponds to the predicted login of the proportion of refugees in a population, conditionally on all other variables, is as follows: 
 
+
+At the alpha = 0.05 significance level, the fitted ____ coefficients for each of our dummy variables relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore there is sufficient evidence to suggest that the true slope corresponding to each predictor is not equal to 0. There is some relationship between the predictor variables and the the proportion of refugees. 
+
+We’re particularly interested in _____ which corresponds to the logic relationship between carbon dioxide emissions and the proportion of refugees in a population. 
+
+H0:
+
+H1:
+
+Under the null hypothesis, our test statistic follows a standard normal distribution. The value of our test statistic is equal to approximately _________, which corresponds to a p-value of ______. Thus, at the $\alpha$ = 0.05, we reject our null hypothesis; we have sufficient evidence to suggest that the true value of ___ not= 0, and that there is a relationship between carbon dioxide emissions and the proportion of refugees in a population. The estimated __ coefficient was _____. Therefore, we would expect proportion of refugees to increase by a factor of _____ (exp(), with 95% CI (___, ____)), holding all other variables constant. The 95% confidence interval for nitrous oxide emissions and methane emissions respectively is (exp(__)) and (exp(____)), which suggests that compared carbon dioxide emissions, nitrous and methane emissions have a lesser impact on the proportion of refugees in a population.
+
+[explanation about linear model with interactions and how it's not useful]
+
+### Diagnostic Plots
+Independence:  The residual plot tests for independence. The residuals exhibit less variance at both extremes of the visualization indicating an abnormal pattern. This may indicate outliers. 
+
+Linearity: There is an approximately symmetric distribution above and below the y=0 line. However, the vertical variation or spread of the residuals is not approximately equal. There is less variance at the extremes of the plot indicating that there is not equal variance. 
+
+Normality: 
+The residuals appear to have a normal distribution. Moreover, since the majority of residuals appear along the theoretical normal distribution line, there is evidence of normality.
+
+### Applying Model to Another Country
+
+### Testing for Multicollinearity
 
 ### DISCUSSION
 
@@ -329,6 +385,9 @@ The significance of the main effects for X X X were Y Y Y respectively. These ar
 
 Overall, this not only served as an excellent exercise for us in applying linear regression to the real world, but also can act as the basis for future work trying to develop a quantitative prediction of refugee flow in the future. 
 
-### Limitations and Concerns 
+### Limitations, Concerns, and Future Investigation 
 
 The main concern with the validity of our models here was the lack of data. The World Bank data which was used was missing for several years and we had to develop our regional groupings due to lack of collation on the part of the World Bank. Moreover, robust, comprehensive data on refugee populations from each country doesn't begin until the late 1980s and early 1990s whereas other metrics such as carbon dioxide emissions begin in the 1960s. In addition to the lack of data, the data on refugee populations was a raw sum and didn't disaggregate the data based on reason for refugee status. Further studies on the relationship between climate predictors and displaced populations should look at refugees and displaced people due to climate change. Though the World Bank data includes data for internally displaced people due to disasters, this metric lacks enough data for analysis.  
+
+Were we to repeat our analysis, we would include and adjust for more potential confounders to improve the prediction accuracy of our model. The test for multicollinearity demonstrated high correlations between some of the predictor variables, especially related to greenhouse gas emissions. We can address multicollinearity by linearly combining the highly correlated independent variables. In context, having a variable for greenhouse gas emissions makes sense within the literature since greenhouse gas emissions are often measured together. 
+
