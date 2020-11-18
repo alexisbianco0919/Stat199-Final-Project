@@ -7,7 +7,7 @@ output:
 authors: Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
 ---
 
-```{r loading-pack-reading-data, message=FALSE, warning=FALSE}
+```{r loading-pack-reading-data, message=FALSE, warning=FALSE, echo=FALSE}
 library(tidyverse)
 library(broom)
 library(caret)
