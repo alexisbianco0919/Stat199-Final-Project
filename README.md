@@ -1,10 +1,13 @@
 # Stat199-Final-Project
 
-Alexis Bianco, Pierce Hollier, Hadeel Hamoud, Ryan Lee
+HARP: Hadeel Hamoud, Alexis Bianco, Ryan Lee, Pierce Hollier
 
 The primary goal in this project is to understand the correlation between climate change indicators 
 and the refugee flow from at-risk countries. In order to make the analysis more manageable, we focused 
 on the climate change and refugee data of the Middle East region.
+
+Our dataset comes from the World Bank Development Indicators Databank, which can be accessed with the 
+link: https://databank.worldbank.org/source/world-development-indicators#
 
 ----------------------------------------VARIABLES UTILIZED----------------------------------------
 
@@ -59,7 +62,7 @@ Filtered to only inlcude the countries Afghanistan / Iran, Islamic Rep. / Iraq /
 
 climate_sahel: a condensed dataframe containing the variables Time, Country Name, arable_land, land_cereal, 
 co2_tons, nitrous_tons, nitrous_kt_per_capita, methane_tons, methane_kt_per_capita, refugee, pop, and prop_refugee. 
-Filtered to only inlcude the countries Afghanistan / Iran, Islamic Rep. / Iraq / Pakistan
+Filtered to only inlcude the countries Afghanistan / Iran, Islamic Rep. / Iraq / Pakistan.
 
 ----------------------------------------LINEAR MODELS----------------------------------------
 
