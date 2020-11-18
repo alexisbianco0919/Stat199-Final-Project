@@ -1,5 +1,5 @@
 ---
-title: "Climate Change and Refugee Flow"
+title: "Climate Change Markers and Refugee Flow"
 date: 'November 20, 2020'
 output:
   pdf_document: default
@@ -125,7 +125,7 @@ ggplot(data = climate_methane, mapping = aes(x = `Time`,
                                       fill = `Country Name`)) + 
   geom_line() +
   labs(x = "Year", y = "Methane Emissions in Metric Tons per Capita", 
-       title = "Graph 3: Methane emissions in Afghanistan remaine relatively
+       title = "Graph 3: Methane emissions in Afghanistan remain relatively
        constant")
 
 # nitrous ----------
@@ -231,8 +231,8 @@ ggplot(data = predicted_iran) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Iran",
-       title = "Predicted proportion of refugees in Iran relatively similar 
-       to observed proportion aside from 2 major outliers", subtitle = 
+       title = "Graph 7: Predicted proportion of refugees in Iran relatively 
+       similar to observed proportion aside from 2 major outliers", subtitle = 
          "Red points are predicted values and black points are observed values")
 
 predicted_afghan <- predicted_values %>%
@@ -242,8 +242,8 @@ ggplot(data = predicted_afghan) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Afghanistan",
-       title = "Predicted proportion of refugees in Afghanistan largely below 
-       observed proportion until 1995", subtitle = 
+       title = "Graph 8: Predicted proportion of refugees in Afghanistan largely 
+       below observed proportion until 1995", subtitle = 
          "Red points are predicted values and black points are observed values")
 
 predicted_pak <- predicted_values %>%
@@ -253,8 +253,8 @@ ggplot(data = predicted_pak) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Pakistan",
-       title = "Predicted proportion of refugees in Pakistan above observed 
-       value until 2002", subtitle = 
+       title = "Graph 9: Predicted proportion of refugees in Pakistan above 
+       observed value until 2002", subtitle = 
          "Red points are predicted values and black points are observed values")
 
 predicted_iraq <- predicted_values %>%
@@ -264,8 +264,8 @@ ggplot(data = predicted_iraq) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Iraq",
-       title = "Predicted proportion of refugees in Iraq relatively similar 
-       to observed proportion aside from 1 major outliers", subtitle = 
+       title = "Graph 10: Predicted proportion of refugees in Iraq relatively 
+       similar to observed proportion aside from 1 major outliers", subtitle = 
          "Red points are predicted values and black points are observed values")
 ```
 
@@ -324,7 +324,7 @@ summary(climate_interac)
 climate_interac %>%
   tidy() %>%
   select(term, estimate) %>%
-  mutate(estimate = round(exp(estimate), 3))
+  mutate(estimate = round(exp(estimate), 6))
 
 ```
 
@@ -337,7 +337,8 @@ We obtained the following 95% of confidence intervals for the slope correspondin
 Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`), CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`), N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`), Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
 
 ### Testing for Multicollinearity 
-To further analyze the relationship between the predictor variables, we tested for mutlicollinearity. This was to determine if two or more explanatory variables in our multiple regression model were highly linearly related.
+
+To further analyze the relationship between the predictor variables, we tested for mutlicollinearity. This was to determine if two or more explanatory variables in our multiple regression model were highly linearly related. VIF scores were calculated for each predictor used in the main effects model. 
 
 ```{r Multicollinearity-tests}
 
@@ -349,9 +350,9 @@ car::vif(climate_model)
 
 ```
 
-### Applying the Model to Another Country 
+### Applying the Main Effects Model to Another Country 
 
-To further evaluate our model, we applied it to another at risk region as identified by the Ecological Threat Register, the Sahel Belt of Africa. The Sahel Belt includes Senegal, Mauritania, Mali, Burkina Faso, Niger, Chad, Sudan, Eritrea. These countries have similar conflict levels and similar economic situations thus lending it to another application of our model. For visualization we chose to examine a graph of predicted values in Burkina Faso. It was a randomly selected country within the Sahel Belt region.
+To further evaluate our model, we applied it to another at risk region as identified by the Ecological Threat Register, the Sahel Belt of Africa. The Sahel Belt includes Senegal, Mauritania, Mali, Burkina Faso, Niger, Chad, Sudan, Eritrea. These countries have similar economic situations thus lending it to another application of our model. However, some do not have similar conflict levels so we chose to apply the model to one country that did experience significant amounts of armed conflict and one that did not. Burkina Faso did not experience significant levels of armed conflict while Niger has and continues to experience high amounts of armed conflict.
 
 ```{r Sahel-region-creation}
 climate_sahel <- climate %>%
@@ -361,7 +362,28 @@ climate_sahel <- climate %>%
 ```
 
 ```{r visualizing-predicted-values-sahel-region}
-climate_filtered_sahel <- climate_sahel %>%
+climate_filtered_niger <- climate_sahel %>%
+  filter(co2_tons != is.na(co2_tons))%>%
+  filter(land_cereal != is.na(land_cereal))%>%
+  filter(methane_tons != is.na(methane_tons))%>%
+  filter(nitrous_tons != is.na(nitrous_tons))%>%
+  filter(!is.na(refugee))%>%
+  filter(`Country Name` == "Niger")
+
+predicted_values_niger <- climate_filtered_niger %>%
+  mutate(predicted_refugee = exp(
+7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01
+* co2_tons + 4.499857e-04 *nitrous_tons + -5.452494e-05* methane_tons))
+
+ggplot(data = predicted_values_niger) +
+  geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
+  geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
+  labs(x = "Year", y = "Proportion of refugees in Niger",
+       title = "Graph 11: Predicted proportion of refugees in Niger mostly fit 
+       observed values after 1995", subtitle = "Red points are predicted
+       values and black points are observed values")
+
+climate_filtered_BF <- climate_sahel %>%
   filter(co2_tons != is.na(co2_tons))%>%
   filter(land_cereal != is.na(land_cereal))%>%
   filter(methane_tons != is.na(methane_tons))%>%
@@ -369,17 +391,19 @@ climate_filtered_sahel <- climate_sahel %>%
   filter(!is.na(refugee))%>%
   filter(`Country Name` == "Burkina Faso")
 
-predicted_values <- climate_filtered_sahel %>%
+predicted_values_BF <- climate_filtered_BF %>%
   mutate(predicted_refugee = exp(
 7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01
 * co2_tons + 4.499857e-04 *nitrous_tons + -5.452494e-05* methane_tons))
 
-ggplot(data = predicted_values) +
+ggplot(data = predicted_values_BF) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Burkina Faso",
-       title = "Predicted proportion of refugees in Burkina Faso higher than 
-       observed proportion of refugees")
+       title = "Graph 12: Predicted proportion of refugees in Burkina Faso 
+       higher than observed proportion of refugees", 
+       subtitle = "Red points are predicted values and black points are 
+       observed values")
 ```
 
 
@@ -392,9 +416,9 @@ Our fitted main-effects multiple linear regression model with a logarithmic tran
 Predicted proportion of refugees = e^(7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01
 * co2_tons + 4.499857e-04 * nitrous_tons + -5.452494e-05 * methane_tons))
 
-At the alpha = 0.05 significance level, the fitted log coefficients for each of our predictors in the log transformation relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore, there is sufficient evidence to suggest that the true log coefficients corresponding to the predictor variables hectares of land for cereal production, metric tons of CO2 produced per capita, and kilotons of nitrous oxide produced compared with the log of the proportion of refugees in the country is not equal to 0. There is some relationship between these predictor variables and change in the proportion of refugees in the countries studied. 
+At the $\alpha$ = 0.05 significance level, the fitted log coefficients for each of our predictors in the log transformation relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore, there is sufficient evidence to suggest that the true log coefficients corresponding to the predictor variables hectares of land for cereal production, metric tons of CO2 produced per capita, and kilotons of nitrous oxide produced compared with the log of the proportion of refugees in the country is not equal to 0. There is some relationship between these predictor variables and change in the proportion of refugees in the countries studied. 
 
-We are particularly interested in testing to see whether there is a log relationship between carbon dioxide emissions and the proportion of refugees in a population. 
+We are particularly interested in testing to see whether there is a relationship between carbon dioxide emissions and the log proportion of refugees in a population. We conducted a hypothesis test at the $\alpha$ = 0.05 level.
 
 H0: There is no relationship between carbon emissions per capita and the log proportion of refugees. The coefficient in the log transformation is 0.
 
@@ -405,21 +429,24 @@ Under the null hypothesis, our test statistic follows a standard normal distribu
 The adjusted coefficient of determination (r squared) for the linear regression model was 0.792. This means 79.2% of the variability in the proportion of refugees can be explained by the model. The adjusted coefficient of determination was used since our model uses multiple predictors. 
 
 ### Diagnostic Plots for Main Effects Linear Regression Model with Log Transformation 
+
 Independence:  The residuals do not exhibit any pattern or abnormal clusters. 
 
 Linearity: There is an approximately symmetric distribution above and below the y=0 line. 
 
 Equal Variance: The vertical variation or spread of the residuals is not approximately equal. There is less variance at the extremes of the plot indicating that there is not equal variance. 
 
-Normality: The residuals appear to have a normal distribution. 
+Normality: The residuals do not appear to have a normal distribution in either the histogram and the Q-Q plot.
+
+Statistical inference from this model is not valid given the violation of normality and equal variance.
 
 ### Multiple Linear Regression Model with Log Transformation and Interactions 
 
-We also constructed a linear model with interactions between each of the predictor variables and a logarithmic transformation. Each interaction tested (CO2 emissions and N2O emissions, CO2 emissions and methane emissions, N2O emissions and methane emissions, and land under cereal production and CO2 emissions) in addition to nitrous oxide gas emissions and methane emissions, only increased the proportion of refugees by a factor of 1 holding all other variables constant. Thus, we found that this model had limited usefulness compared to the model that analyzed main effects. 
+We also constructed a linear model with interactions between each of the predictor variables and a logarithmic transformation. However, we found that this model had limited usefulness compared to the model that analyzed main effects. 
 
 ### Testing for Multicollinearity
 
-The VIF scores of the variables output here indicate high degree of multicollinearity with several of the variables. Everything expect for CO2 emissions had a VIF greater than 5 which was our established level of concern. This was expected given that we were including variables that measured emissions. Something that is a source of emissions is likely not a source for only a single type of emissions meaning that as one type of emissions increases, the other kinds of emissions will also increase. Thus there was a great deal of correlation between our variables. That interaction between the variables made the point predictions in our test data from the Sahel very inaccurrate. Methods for resolving these problems are addressed in the limitations and concerns sections. 
+The VIF scores of the variables output above indicate high degree of multicollinearity with several of the variables. Everything expect for CO2 emissions had a VIF greater than 5 which was our established level of concern. This not surprising given that we were including variables that measured emissions. Something that is a source of emissions is likely not a source for only a single type of emissions. This means that as one type of emissions increases, the other kinds of emissions will likely also increase. Thus there was a great deal of correlation between our variables. That interaction between the variables made the point predictions in our test data from the Sahel very inaccurrate. Methods for resolving these problems are addressed in the limitations and concerns sections. 
 
 ### Applying Model to Another Country
 
