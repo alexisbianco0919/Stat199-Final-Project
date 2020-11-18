@@ -220,8 +220,8 @@ Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`), 
 ```{r visualizing-predicted-values}
 predicted_values <- climate_filtered %>%
   mutate(predicted_refugee = exp(
-7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01
-* co2_tons + 4.499857e-04 *nitrous_tons + -5.452494e-05* methane_tons))
+7.004603e-01 + -1.584535e-06 * land_cereal + -3.723390e-01 * co2_tons + 
+  4.499857e-04 *nitrous_tons + -5.452494e-05* methane_tons))
 
 predicted_iran <- predicted_values %>%
   filter (`Country Name` == "Iran, Islamic Rep.")
@@ -231,7 +231,7 @@ ggplot(data = predicted_iran) +
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Iran",
        title = "Predicted proportion of refugees in Iran relatively similar 
-to observed proportion aside from 2 major outliers")
+       to observed proportion aside from 2 major outliers")
 
 predicted_afghan <- predicted_values %>%
   filter (`Country Name` == "Afghanistan")
@@ -240,7 +240,8 @@ ggplot(data = predicted_afghan) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Afghanistan",
-       title = "Predicted proportion of refugees in Afghanistan largely below observed proportion until 1995")
+       title = "Predicted proportion of refugees in Afghanistan largely below 
+       observed proportion until 1995")
 
 predicted_pak <- predicted_values %>%
   filter (`Country Name` == "Pakistan")
@@ -249,7 +250,8 @@ ggplot(data = predicted_pak) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Pakistan",
-       title = "Predicted proportion of refugees in Pakistan above observed value until 2002")
+       title = "Predicted proportion of refugees in Pakistan above observed 
+       value until 2002")
 
 predicted_iraq <- predicted_values %>%
   filter (`Country Name` == "Iraq")
@@ -259,7 +261,7 @@ ggplot(data = predicted_iraq) +
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Iraq",
        title = "Predicted proportion of refugees in Iraq relatively similar 
-to observed proportion aside from 1 major outliers")
+       to observed proportion aside from 1 major outliers")
 ```
 
 ### Diagnostic Plots for Main Effects Linear Regression Model with Log Transformation 
@@ -375,7 +377,8 @@ ggplot(data = predicted_values) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Burkina Faso",
-       title = "Predicted proportion of refugees in Burkina Faso higher than observed proportion of refugees")
+       title = "Predicted proportion of refugees in Burkina Faso higher than 
+       observed proportion of refugees")
 ```
 
 
@@ -421,13 +424,13 @@ The VIF scores of the variables output here indicate high degree of multicolline
 
 ### DISCUSSION
 
-Given the rapidly accelerating nature of climate change, it is imperative that more data analysis be done on the massive impacts it has. Our goal was to see what climate change factors like CO2 emissions and agricultural outputs would influence refugee flow from a country. Refugee flow was picked as a terminal measure of climate change impacts on a country. With so many people denying that climate change impacts their lives because it just makes some days hotter, we decided to show a very concrete and serious impact on the lives of millions of people.  Using a linear model allowed us to see not only the direct effects of several different variables all at play at once, but also their interactions. In all of the countries we analyzed, climate change was not the only factor that influenced refugee flow. However, the ability to explain even 20% of the variance in something as intensely complicated as refugee flow with a linear model would be quite the feat. In this experiment we were actually able to obtain and adjusted R squared of ADJ R SQUARED HERE. GOOD result: This was surprising and could be due to LIMITATIONS, but the conditions for inference were mostly satisfied leading us to believe we had constructed a robust model. BAD result: While we were not able to construct a model that explained a significant amount of the variance in refugee flow, this was still a good exercise in trying to uncover relationships that could help the general understanding of migration. 
+Given the rapidly accelerating nature of climate change, it is imperative that more data analysis be done on the massive impacts it has. Our goal was to see what climate change factors like CO2 emissions and agricultural outputs would influence refugee flow from a country as a terminal measure of climate change impacts. With so many people denying that climate change impacts their lives because they are unable to see the greater impacts, we decided to show a very concrete and serious demonstration of how it has affected the lives of millions of people. Using a linear model allowed us to see not only the direct effects of several different variables at play together, but also their interactions. In all of the countries we analyzed, climate change was not the only factor that influenced refugee flow, although, the ability to explain even 20% of the variance in something as intensely complicated as refugee flow with a linear model would be quite the feat. In this experiment we were actually able to obtain and adjusted R squared of 0.886. This was surprising and could be due to a lack of consistent, regularly recorded data, but the conditions for inference were mostly satisfied, leading us to believe we had constructed a robust model.
 
-Our variables were X X X X X. Some like X and X were chosen because they are very obvious markers of human impact on the climate. Additionally X and X were chose because they are downstream markers of anthropogenic climate change that are closer to affecting human lives. There was also an interaction effect between X and X measured for THIS REASON. 
+Our linear model measured the impact of nitrous, CO2, and methane emissions alongside cereal land on refugee flow in Middle Eastern countries. Some variables like cereal land available and CO2 emissions were chosen because they are very obvious markers of human impact on the climate. Additionally nitrous and methane emissions were chosen because they are downstream markers of anthropogenic climate change that are closer to affecting human lives. There were also interactions effects measured between carbon, nitrous, and methane emissions due to the facts that they all contribute to the greenhouse effect which has a direct impact on global climate change. 
 
-The significance of the main effects for X X X were Y Y Y respectively. These are great results indicating there likely is a relationship between these variables and refugee flow. 
+The significance of the main effects for CO2 emissions, nitrous emissions, methane emissions, and cereal land were 6.617e-1, 1.292e-2, 6.436e-7, and 2.169e-10 respectively. These are great results indicating there likely is a relationship between these variables and refugee flow. 
 
-While we did not formally predict a direction for the relationship between our predictors and refugee flow, our general thought was that as markers of climate change worsened (i.e. emissions increased) the refugee flow from a country would increase. However, the opposite was true for some emissions markers, most clearly for CO2 emissions in kilotons per capita. This was likely the case because CO2 emissions are not just a marker of a worsening climate. They are also a marker of the economic development of a country. SOURCE HERE As almost every country in the world has industrialized, their CO2 emissions have increased. Additionally, while the impacts of climate change can take many years to accumulate to a disastrous level, the impacts of rapid economic development can be felt much faster. Those impacts are usually more job opportunities and decreases in poverty, both of which would make someone more likely to stay in the current country of residence. Overall, this data proves a general relationship all over the world which is that rapid economic development may make immediate living situations easier, but it will also have impacts on the environment such as increased emissions. 
+While we did not formally predict a direction for the relationship between our predictors and refugee flow, our general thought was that as markers of climate change worsened (i.e. emissions increased), the refugee flow from a country would increase. However, the opposite was true for some emissions markers, most clearly for CO2 emissions in kilotons per capita. This was likely the case because CO2 emissions are not just a marker of a worsening climate, but also a marker of the economic development of a country. As almost every country in the world has industrialized, their CO2 emissions have increased. Additionally, while the impacts of climate change can take many years to accumulate to a disastrous level, the impacts of rapid economic development can be felt much faster. Those impacts are usually more job opportunities and decreases in poverty, both of which would make someone more likely to stay in the current country of residence. Overall, this data proves a general relationship all over the world which is that rapid economic development may make immediate living situations easier, but it will also have impacts on the environment such as increased emissions. 
 
 Overall, this not only served as an excellent exercise for us in applying linear regression to the real world, but also can act as the basis for future work trying to develop a quantitative prediction of refugee flow in the future. 
 
