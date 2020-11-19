@@ -417,11 +417,7 @@ Predicted proportion of refugees = e^(7.004603e-01 + -1.584535e-06 * land_cereal
 * co2_tons + 4.499857e-04 * nitrous_tons + -5.452494e-05 * methane_tons))
 
 
-At the alpha = 0.05 significance level, each of the fitted coefficients for each of our predictors in the log transformation relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore, there is sufficient evidence to suggest that the true log coefficients corresponding to the predictor variables hectares of land for cereal production, metric tons of CO2 produced per capita, and kilotons of nitrous oxide produced compared with the log of the proportion of refugees in the country is not equal to 0. There is some relationship between these predictor variables and change in the proportion of refugees in the countries studied. 
-
-We are particularly interested in testing to see whether there is a log relationship between carbon dioxide emissions and the proportion of refugees in a population, since CO2 emissions seemed to have the largest effect when we exponentiated the coefficients from the linear model with the log transformation. 
-
-At the $\alpha$ = 0.05 significance level, the fitted log coefficients for each of our predictors in the log transformation relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore, there is sufficient evidence to suggest that the true log coefficients corresponding to the predictor variables hectares of land for cereal production, metric tons of CO2 produced per capita, and kilotons of nitrous oxide produced compared with the log of the proportion of refugees in the country is not equal to 0. There is some relationship between these predictor variables and change in the proportion of refugees in the countries studied. 
+At the $\alpha$ = 0.05 significance level, the fitted coefficients for each of our predictors in the log transformation relative to the baseline category of standard refugee rate were statistically significant except for methane emissions. Therefore, there is sufficient evidence to suggest that the true coefficients of the log transformation corresponding to the predictor variables hectares of land for cereal production, metric tons of CO2 produced per capita, and kilotons of nitrous oxide produced compared with the log of the proportion of refugees in the country is not equal to 0. There is some relationship between these predictor variables and change in the proportion of refugees in the countries studied. 
 
 We are particularly interested in testing to see whether there is a relationship between carbon dioxide emissions and the log proportion of refugees in a population. We conducted a hypothesis test at the $\alpha$ = 0.05 level.
 
@@ -444,7 +440,7 @@ Equal Variance: The vertical variation or spread of the residuals is not approxi
 
 Normality: The residuals do not appear to have a normal distribution in either the histogram and the Q-Q plot.
 
-Statistical inference from this model is not valid given the violation of normality and equal variance.
+The conditions of normality and equal variance were violated, indicating that the linear model with log transformation was does not fully capture the relationship between the climate change indicators and the log of the proportion of refugees. However, given the very low p-values for some of the coefficients in the model, we can make some inferential statements from our model. However, of the statistically significant predictors, the CO2 emissions coefficient had the highest p-value of 1.446306e-02. Since this is close to the alpha, we should be more careful about inferential statements with CO2 emissions. In the future we would look to use a different model that can better capture the sophisticated relationship between these climate change predictors and the proportion of refugees in a country.
 
 ### Multiple Linear Regression Model with Log Transformation and Interactions 
 
