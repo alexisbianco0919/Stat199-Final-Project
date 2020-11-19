@@ -25,7 +25,7 @@ The intersection of climate change and migration requires comprehensive data ana
 
 Our dataset comes from the World Bank Development Indicators Databank. According to the World Bank, most of the data comes directly from each country in the World Bank Group’s national statistical systems. The raw data itself contains many development indicators, and the series name tells us the metric or variable for which we are getting data. Within each series, the data is broken down into the data for each nation for each year between 1960-2019. The dataset additionally contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. Unfortunately, the WDB does not have very complete data for some of the variables. However, we will focus on variables that have sufficient data, unless the variable is unlikely to change much over time. 
 
-We will start by examining variables in the WDB data that scientific literature identifies as climate change predictors such as CO2 emissions (as measured in kiltons per capita), other greenhouse emissions (in kilotons), land under cereal production, and percentage of arable land. We will also examine refugee flow out of the countries relative to each country's population. Then, we will analyze the correlation between refugee flow and climate predictors. The predictors will be used to build and evaluate a linear model that attempts to demonstrate if there is a relationship between predictors and refugee flow as well as explain some of the variance in said refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. A model that is able to predict even 15% of the variance in refugee flow would be a useful result. We hypothesize that CO2 emissions (in kilotons per capita), other greenhouse emissions (in kilotons), and land under cereal production will have a linear relationship with refugee flow and be able to explain at least 15% of the variance in refugee flow from countries in the Middle East and Central Asian Belt. We will analyze the validity of our hypothesis using a multiple linear regression model and associated tests such as a mutlicollinearity test.
+We will start by examining variables in the WDB data that scientific literature identifies as climate change predictors such as CO2 emissions (as measured in kiltons per capita), other greenhouse emissions (in kilotons), land under cereal production, and percentage of arable land. We will also examine refugee flow out of the countries relative to each country's population. Then, we will analyze the correlation between refugee flow and climate predictors. The predictors will be used to build and evaluate a linear model that attempts to demonstrate if there is a relationship between predictors and refugee flow as well as explain some of the variance in said refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. We hypothesize that at least one of the climate predictors (CO2 emissions in kilotons per capita, other greenhouse emissions in kilotons, and land under cereal production) in our linear model will have a statistically significant relationship with refugee flow from the countries in the Middle East and Central Asian Belt. We will test this hypothesis using a multiple linear regression model and associated tests such as a mutlicollinearity test.
 
 ### METHODOLOGY 
 
@@ -215,7 +215,10 @@ Predicted proportion of refugees = e^(7.004603e-01 + -1.584535e-06 * land_cereal
 
 We obtained the following 95% of confidence intervals for the slope corresponding to each predictor variable conditional on all other predictors in our model: 
 
-Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`), CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`), N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`), Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
+Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`)
+CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`)
+N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`)
+Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
 
 
 Next we constructed visualizations for the predicted values given by our model as compared to the observed values for refugee flow from each country.
@@ -283,8 +286,7 @@ residuals will be plotted alongside the line y = 0, and their spread will be eva
 ggplot(climate_model_aug, mapping = aes(x = .fitted, y = .std.resid)) +
   geom_point() + 
   geom_hline(yintercept = 0, lwd = 2, col = "red", lty = 2) +
-  labs(x = "Value", y = "Residuals", title = "Graph 11: Residuals have 
-  realatively equal variance when plotted with the line y = 0")
+  labs(x = "Value", y = "Residuals", title = "Graph 11: Equal variance condition not met")
 ```
 
 
@@ -295,7 +297,7 @@ ggplot(data = climate_model_aug,
        aes(x = 1:nrow(climate_filtered), 
            y = .std.resid)) + 
   geom_point() + labs(x = "Index", y = "Residual", title = "Graph 12: Residuals 
-  do not form any patterns or clusters, making them independent")
+  do not form any patterns or clusters, indicating independence")
 ```
 
 The next requirement is that of normality. The checks for this involved both a plotting of the residuals on a histogram as well as the creation of a Q-Q plot. The histogram was examined for a potential relationship between the residuals and the fit of the model to the qq line was checked too. 
@@ -345,7 +347,14 @@ Predicted proportion of refugees = e^(2.045090 - 1.847728e-06 * land_cereal - 1.
 
 We obtained the following 95% of confidence intervals for the slope corresponding to each predictor conditional on all other predictors in our model: 
 
-Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`), CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`), N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`), Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
+Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`)
+CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`)
+N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`)
+Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
+CO2 emissions:N20 emissions: (`r exp(-1.723203e-04)`, `r exp(-2.604716e-05)`) 
+CO2 emissions:methane emissions:(`r exp(-2.449167e-05)`, `r exp(1.399264e-05)`) 
+N2O emissions:methane emissions:(`r exp(8.197153e-09)`, `r exp(1.560050e-08)`) 
+CO2 emissions:cereal land: (`r exp(1.218353e-07)`, `r exp(3.912567e-07)`) 
 
 ### Testing for Multicollinearity 
 
@@ -390,7 +399,7 @@ ggplot(data = predicted_values_niger) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Niger",
-       title = "Graph 11: Predicted proportion of refugees in Niger mostly fit 
+       title = "Graph 15: Predicted proportion of refugees in Niger mostly fit 
        observed values after 1995", subtitle = "Red points are predicted
        values and black points are observed values")
 
@@ -411,7 +420,7 @@ ggplot(data = predicted_values_BF) +
   geom_point(color= "red", (mapping = aes(x = `Time`, y = predicted_refugee))) + 
   geom_point(mapping = aes(x = `Time`, y = prop_refugee))+
   labs(x = "Year", y = "Proportion of refugees in Burkina Faso",
-       title = "Graph 12: Predicted proportion of refugees in Burkina Faso 
+       title = "Graph 16: Predicted proportion of refugees in Burkina Faso 
        higher than observed proportion of refugees", 
        subtitle = "Red points are predicted values and black points are 
        observed values")
@@ -437,7 +446,7 @@ $H_0$: There is no relationship between carbon emissions per capita and the log 
 
 $H_1$: There is a relationship between carbon emission per capita and the log proportion of refugees. The coefficient in the linear model with log transformation is not 0.
 
-Under the null hypothesis, our test statistic follows a standard normal distribution. The value of our test statistic is equal to approximately -2.486452, which corresponds to a p-value of 1.446306e-02. Thus, at the $\alpha$ = 0.05, we reject our null hypothesis; we have sufficient evidence to suggest that there is a relationship between the metric tons of CO2 produced per capita and the log of the proportion of refugees. The estimated log transformation coefficient was -3.723390e-01 for CO2 emissions. Therefore, we are 95% confidence that the proportion of refugees to decreases by a factor of `r exp(-6.692271e-01	)` - `r exp(-7.545083e-02)`, holding all other variables constant. The 95% confidence intervals for nitrous oxide emissions and methane emissions respectively are (`r exp(2.614107e-04)` - `r exp(6.385607e-04)`) and (`r exp(-1.197378e-04)` - `r exp(1.068793e-05)`), which suggests that compared carbon dioxide emissions, nitrous and methane emissions have a lesser impact on the proportion of refugees in a population.
+Under the null hypothesis, our test statistic follows a standard normal distribution. The  t-statistic is equal to approximately -2.486452 with 106 degrees of freedom, which corresponds to a p-value of 1.446306e-02. Thus, at the $\alpha$ = 0.05, we reject our null hypothesis; we have sufficient evidence to suggest that there is a relationship between the metric tons of CO2 produced per capita and the log of the proportion of refugees. The estimated log transformation coefficient was -3.723390e-01 for CO2 emissions. Therefore, we are 95% confidence that the proportion of refugees to decreases by a factor of `r exp(-6.692271e-01	)` - `r exp(-7.545083e-02)`, holding all other variables constant. The 95% confidence intervals for nitrous oxide emissions and methane emissions respectively are (`r exp(2.614107e-04)` - `r exp(6.385607e-04)`) and (`r exp(-1.197378e-04)` - `r exp(1.068793e-05)`), which suggests that compared carbon dioxide emissions, nitrous and methane emissions have a lesser impact on the proportion of refugees in a population.
 
 The adjusted coefficient of determination (r squared) for the linear regression model was 0.792. This means 79.2% of the variability in the proportion of refugees can be explained by the model. The adjusted coefficient of determination was used since our model uses multiple predictors. 
 
