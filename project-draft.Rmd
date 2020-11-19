@@ -79,18 +79,18 @@ climate_me <- climate %>%
 # refugee -----------
 
 climate_refugee <- climate_me %>%
-  select(`Time`, `Country Name`, refugee, refugee_per_100000)%>%
-  filter(refugee_per_100000 != is.na(refugee_per_100000)) 
+  select(`Time`, `Country Name`, refugee, prop_refugee)%>%
+  filter(prop_refugee != is.na(prop_refugee)) 
 
 ggplot(data = climate_refugee, mapping = aes(x = `Time`,
-                                             y= refugee_per_100000,
+                                             y= prop_refugee,
                                       color = `Country Name`, 
                                       fill = `Country Name`)) + 
   #facet_wrap( ~ `Country Name`) +
   geom_line() +
-  labs(x = "Year", y = "Refugees per 100k Population of Country of Origin", 
-       title = "Graph 1: Number of refugees in Iran and Pakistan remained
-       relatively similar while that in Syria increased sharply after 2011 
+  labs(x = "Year", y = "Refugees as Proportion of Population in Country of Origin", 
+       title = "Graph 1: The proportion of total population that were reguees in Iran and Pakistan remained
+       relatively similar, but increased sharply in Syria after 2011 
        civil war")
 
 ```
