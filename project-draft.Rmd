@@ -25,7 +25,7 @@ The intersection of climate change and migration requires comprehensive data ana
 
 Our dataset comes from the World Bank Development Indicators Databank. According to the World Bank, most of the data comes directly from each country in the World Bank Group’s national statistical systems. The raw data itself contains many development indicators, and the series name tells us the metric or variable for which we are getting data. Within each series, the data is broken down into the data for each nation for each year between 1960-2019. The dataset additionally contains all the markers that the WDB has tracked in association with climate change in almost every country on Earth. This includes variables such as CO2 emissions levels of every country and agricultural output of each country. Unfortunately, the WDB does not have very complete data for some of the variables. However, we will focus on variables that have sufficient data, unless the variable is unlikely to change much over time. 
 
-We will start by examining variables in the WDB data that scientific literature identifies as climate change predictors such as CO2 emissions (as measured in kiltons per capita), other greenhouse emissions (in kilotons), land under cereal production, and percentage of arable land. We will also examine refugee flow out of the countries relative to each country's population. Then, we will analyze the correlation between refugee flow and climate predictors. The predictors will be used to build and evaluate a linear model that attempts to demonstrate if there is a relationship between predictors and refugee flow as well as explain some of the variance in said refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. We hypothesize that at least one of the climate predictors (CO2 emissions in kilotons per capita, other greenhouse emissions in kilotons, and land under cereal production) in our linear model will have a statistically significant relationship with refugee flow from the countries in the Middle East and Central Asian Belt. We will test this hypothesis using a multiple linear regression model and associated tests such as a mutlicollinearity test.
+We will start by examining variables in the WDB data that scientific literature identifies as climate change predictors such as CO2 emissions (as measured in tons per capita), other greenhouse emissions (in kilotons), land under cereal production, and percentage of arable land. We will also examine refugee flow out of the countries relative to each country's population. Then, we will analyze the correlation between refugee flow and climate predictors. The predictors will be used to build and evaluate a linear model that attempts to demonstrate if there is a relationship between predictors and refugee flow as well as explain some of the variance in said refugee flow. While refugee flow from a country can be influenced by an almost innumerable amount of variables, the hope for the project is not predict all of that variance. We hypothesize that at least one of the climate predictors (CO2 emissions in tons per capita, other greenhouse emissions in kilotons, and land under cereal production) in our linear model will have a statistically significant relationship with refugee flow from the countries in the Middle East and Central Asian Belt. We will test this hypothesis using a multiple linear regression model and associated tests such as a mutlicollinearity test.
 
 ### METHODOLOGY 
 
@@ -124,7 +124,7 @@ ggplot(data = climate_methane, mapping = aes(x = `Time`,
                                       color = `Country Name`, 
                                       fill = `Country Name`)) + 
   geom_line() +
-  labs(x = "Year", y = "Methane Emissions in Metric Tons per Capita", 
+  labs(x = "Year", y = "Methane Emissions in Metric Kilotons", 
        title = "Graph 3: Methane emissions in Afghanistan remain relatively
        constant")
 
@@ -138,7 +138,7 @@ ggplot(data = climate_methane, mapping = aes(x = `Time`, y = nitrous_tons,
                                              color = `Country Name`,
                                              fill = `Country Name`)) +
   geom_line() + 
-  labs(x = "Year", y = "Nitrous Emissions in Metric Tons per Capita",
+  labs(x = "Year", y = "Nitrous Emissions in Metric Kilotons",
        title = "Graph 4: Nitrous emissions increase at similar rates for Iran 
        and Pakistan ")
 
@@ -178,7 +178,7 @@ The percentage of arable land remained relatively constant for all four countrie
 
 ### Main Effects Linear Regression Model with Log Transformation and Assessing Quality of Fit
 
-In order to analyze our data, we will construct a multiple linear regression model with the amount of land under cereal production, methane emissions, nitrous emissions, and CO2 emissions (all measured in kilotons per capita) as predictor variables and refugees as a proportion of the overall population as the response variable. The model was constructed using data from Afghanistan, Iraq, Iran, and Pakistan. Constructing this model will allow us to investigate the existence and nature of any relationship between the climate change indicators and the refugee flow. It will also allow us to discern which climate change indicators have the most significant impact on refugee flow from a country. Since the distribution of the response variable, proportion of refugees, is skewed, we used a logarithmic transformation in order to more accurately construct a linear model. 
+In order to analyze our data, we will construct a multiple linear regression model with the amount of land under cereal production, methane and nitrous emissions (both measured in kilotons), and CO2 emissions (measuered in tons per capita) as predictor variables and refugees as a proportion of the overall population as the response variable. The model was constructed using data from Afghanistan, Iraq, Iran, and Pakistan. Constructing this model will allow us to investigate the existence and nature of any relationship between the climate change indicators and the refugee flow. It will also allow us to discern which climate change indicators have the most significant impact on refugee flow from a country. Since the distribution of the response variable, proportion of refugees, is skewed, we used a logarithmic transformation in order to more accurately construct a linear model. 
 
 ```{r linear-regression-model}
 climate_filtered <- climate_data %>%
@@ -220,7 +220,7 @@ CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`)
 N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`)
 Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
 
-We performed a hypothesis test to determine the existence of statistically significant between a predictor (CO2 emissions in kt per capita) and refugee flow as a proportion of population. It is discussed in detail in the results section. CO2 emissions were chosen due to it having the largest impact on refugee flow in terms of its estimated $\beta$. Next we constructed visualizations for the predicted values given by our model as compared to the observed values for refugee flow from each country.
+We performed a hypothesis test to determine the existence of statistically significant between a predictor (CO2 emissions in tons per capita) and refugee flow as a proportion of population. It is discussed in detail in the results section. CO2 emissions were chosen due to it having the largest impact on refugee flow in terms of its estimated $\beta$. Next we constructed visualizations for the predicted values given by our model as compared to the observed values for refugee flow from each country.
 
 
 ```{r visualizing-predicted-values}
