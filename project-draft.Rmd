@@ -216,9 +216,9 @@ Predicted proportion of refugees = e^(7.004603e-01 + -1.584535e-06 * land_cereal
 
 We obtained the following 95% of confidence intervals for the slope corresponding to each predictor variable conditional on all other predictors in our model: 
 
-Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`)
-CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`)
-N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`)
+Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`) |
+CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`) | 
+N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`) |
 Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
 
 We performed a hypothesis test to determine the existence of statistically significant between a predictor (CO2 emissions in tons per capita) and refugee flow as a proportion of population. It is discussed in detail in the results section. CO2 emissions were chosen due to it having the largest impact on refugee flow in terms of its estimated $\beta$. Next we constructed visualizations for the predicted values given by our model as compared to the observed values for refugee flow from each country.
@@ -347,13 +347,13 @@ Predicted proportion of refugees = e^(2.045090 - 1.847728e-06 * land_cereal - 1.
 
 We obtained the following 95% of confidence intervals for the slope corresponding to each predictor conditional on all other predictors in our model: 
 
-Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`)
-CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`)
-N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`)
-Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) 
-CO2 emissions:N20 emissions: (`r exp(-1.723203e-04)`, `r exp(-2.604716e-05)`) 
-CO2 emissions:methane emissions:(`r exp(-2.449167e-05)`, `r exp(1.399264e-05)`) 
-N2O emissions:methane emissions:(`r exp(8.197153e-09)`, `r exp(1.560050e-08)`) 
+Land under cereal production: (`r exp(-1.908627e-06)`, `r exp(-1.260443e-06)`) |
+CO2 emissions: (`r exp(-6.692271e-01)`, `r exp(-7.545083e-02)`) |
+N20 emissions: (`r exp(2.614107e-04)`, `r exp(6.385607e-04)`) |
+Methane emissions: (`r exp(-1.197378e-04)`, `r exp(1.068793e-05)`) | 
+CO2 emissions:N20 emissions: (`r exp(-1.723203e-04)`, `r exp(-2.604716e-05)`) |
+CO2 emissions:methane emissions:(`r exp(-2.449167e-05)`, `r exp(1.399264e-05)`) |
+N2O emissions:methane emissions:(`r exp(8.197153e-09)`, `r exp(1.560050e-08)`) |
 CO2 emissions:cereal land: (`r exp(1.218353e-07)`, `r exp(3.912567e-07)`) 
 
 ### Testing for Multicollinearity 
